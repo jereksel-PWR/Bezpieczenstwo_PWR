@@ -21,34 +21,11 @@ public class Zadanie1 implements Zadanie {
 
     public void wykonaj(String indeks, SystemKodowania systemKodowania) throws Exception {
 
-       // ASCII ascii = new ASCII();
-
         ZrodloDanych zrodloDanych = new StronaWykladowcy(indeks);
-
-        /*
-        String data = IOUtils.toString(new URL("http://zagorski.im.pwr.wroc.pl/courses/kbk2015/l1.php?id=" + indeks));
-
-        data = StringUtils.substringBefore(data, "<br /><br /><br /><b>(zad 2)</b> znajdz klucz, ktorego 8 znakow to:");
-
-        data = data.replace("<br /><br /><br /><br /><b>(zad 1) kryptogram do zdeszyfrowania:</b><br />", "<br /><br />kryptogram nr 99:<br />");
-
-        List<String> dane = Arrays.asList(data.split("<br /><br />kryptogram nr (\\d)*:<br />"));
-
-        List<List<String>> kryptogramy = dane.stream()
-                .map(string -> Arrays.asList(StringUtils.split(string)))
-                .filter(e -> !e.isEmpty())
-                .collect(Collectors.toList());
-*/
-
-        List<String> dane = zrodloDanych.getDane();
-
-
 
         List<List<String>> kryptogramy = zrodloDanych.getDane().stream()
                 .map(e -> Splitter.fixedLength(systemKodowania.getDlugosc()).splitToList(e))
                 .collect(Collectors.toList());
-
-        //StringUtils.
 
         List<List<String>> klucze = new ArrayList<>();
 
