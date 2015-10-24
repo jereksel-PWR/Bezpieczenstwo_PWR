@@ -16,7 +16,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
-public class Zadanie2 implements Zadanie {
+public class Zadanie2 {
 
     public static AtomicInteger atomicInteger = new AtomicInteger(0);
     private AtomicInteger atomicIntegerPrivate = new AtomicInteger(0);
@@ -24,7 +24,6 @@ public class Zadanie2 implements Zadanie {
     //Wiadomość: China Allegedly Arrested Hackers To Comply With The U.S. Government's Demands
     //Klucz: 449bdd83af52c65e
 
-    @Override
     public void wykonaj(String indeks, SystemKodowania systemKodowania) throws Exception {
 
         ASCII ascii = new ASCII();

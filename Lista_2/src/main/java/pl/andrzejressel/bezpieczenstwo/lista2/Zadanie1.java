@@ -19,9 +19,7 @@ public class Zadanie1 implements Zadanie {
 
     //Rozwiązanie: Ewa Wachowicz: "Lubię testować różne jądra"
 
-    public void wykonaj(String indeks, SystemKodowania systemKodowania) throws Exception {
-
-        ZrodloDanych zrodloDanych = new StronaWykladowcy(indeks);
+    public void wykonaj(ZrodloDanych zrodloDanych, SystemKodowania systemKodowania) throws Exception {
 
         List<List<String>> kryptogramy = zrodloDanych.getDane().stream()
                 .map(e -> Splitter.fixedLength(systemKodowania.getDlugosc()).splitToList(e))

@@ -21,6 +21,9 @@ public class ASCII implements SystemKodowania {
         whiteList.add((int) ')');
         whiteList.add((int) '"');
         whiteList.add((int) ';');
+        whiteList.add((int) '\'');
+        whiteList.add((int) '+');
+
 
 /*
         whiteList.add((int) '%');

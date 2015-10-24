@@ -1,8 +1,13 @@
 package pl.andrzejressel.bezpieczenstwo.lista2;
 
 import org.apache.commons.cli.*;
+import pl.andrzejressel.bezpieczenstwo.lista2.dane.Plik;
+import pl.andrzejressel.bezpieczenstwo.lista2.dane.StronaWykladowcy;
+import pl.andrzejressel.bezpieczenstwo.lista2.dane.ZrodloDanych;
 import pl.andrzejressel.bezpieczenstwo.lista2.kodowanie.ASCII;
 import pl.andrzejressel.bezpieczenstwo.lista2.kodowanie.SystemKodowania;
+
+import java.io.File;
 
 public class Main {
 
@@ -23,12 +28,31 @@ public class Main {
 
         String indeks = cmd.getOptionValue("indeks");
         String zadanie = cmd.getOptionValue("zadanie");
+        String sposob = cmd.getOptionValue("sposob");
+        String szyfruj = cmd.getOptionValue("szyfruj");
+
+
+        ZrodloDanych zrodloDanych;
+
+        switch (sposob) {
+            case "plik":
+                zrodloDanych = new Plik(new File(indeks));
+                break;
+
+            case "wykladowca":
+                zrodloDanych = new StronaWykladowcy(indeks);
+                break;
+
+            default:
+                showHelp();
+                return;
+        }
 
         SystemKodowania ascii = new ASCII();
 
         switch (zadanie) {
             case "1":
-                new Zadanie1().wykonaj(indeks, ascii);
+                new Zadanie1().wykonaj(zrodloDanych, ascii);
                 break;
             case "2":
                 new Zadanie2().wykonaj(indeks, ascii);
@@ -56,14 +80,29 @@ public class Main {
                 .required()
                 .longOpt("zadanie").build();
 
+        Option sposob = Option.builder()
+                .hasArg()
+                .desc("wykladowca/plik")
+                .required()
+                .longOpt("sposob").build();
+
+        Option szyfruj = Option.builder()
+                .hasArg()
+                .required(false)
+                .desc("Tryb szyfrowania pliku (salsa20/rc4)")
+                .argName("algorytm")
+                .longOpt("szyfruj").build();
+
         Option indeks = Option.builder()
                 .hasArg()
-                .desc("nr. indeksu")
+                .desc("nr. indeksu/plik")
                 .required()
                 .longOpt("indeks").build();
 
         options.addOption(zadanie);
+        options.addOption(sposob);
         options.addOption(indeks);
+        options.addOption(szyfruj);
 
         return options;
     }
