@@ -20,29 +20,37 @@ import java.util.stream.Collectors;
 
 public class Szyfrator {
 
-    public static void main(String[] args) throws Exception {
+    String algorytm;
+    byte[] key = RandomUtils.nextBytes(32);
+    byte[] iv = RandomUtils.nextBytes(8);
 
-       Byte bytea = Byte.valueOf("-1111111",2);
+    private Szyfrator(String algorytm) {
 
+        String[] algorytmy = {"salsa20", "rc4", "xor"};
 
-        szyfruj(new File(args[1]), args[0]);
+        if (!(ArrayUtils.contains(algorytmy, algorytm))) {
+            throw new IllegalArgumentException("Brak takiego algorytmu");
+        }
+
+        this.algorytm = algorytm;
+
     }
 
-    public static void szyfruj(File plik, String algorytm_nazwa) throws Exception {
+    private StreamCipher getAlgorytm() {
 
         StreamCipher algorytm;
         KeyParameter keyParam;
 
-        switch (algorytm_nazwa) {
+        switch (this.algorytm) {
             case "salsa20":
                 algorytm = new Salsa20Engine();
-                keyParam = new KeyParameter(RandomUtils.nextBytes(32));
-                ParametersWithIV parametersWithIV = new ParametersWithIV(keyParam, RandomUtils.nextBytes(8));
+                keyParam = new KeyParameter(key);
+                ParametersWithIV parametersWithIV = new ParametersWithIV(keyParam, iv);
                 algorytm.init(true, parametersWithIV);
                 break;
             case "rc4":
                 algorytm = new RC4Engine();
-                keyParam = new KeyParameter(RandomUtils.nextBytes(32));
+                keyParam = new KeyParameter(key);
                 algorytm.init(true, keyParam);
                 break;
             case "xor":
@@ -53,6 +61,17 @@ public class Szyfrator {
 
         }
 
+        return algorytm;
+    }
+
+    public static void main(String[] args) throws Exception {
+
+        //  Byte bytea = Byte.valueOf("-1111111", 2);
+
+        new Szyfrator(args[0]).szyfruj(new File(args[1]));
+    }
+
+    private void szyfruj(File plik) throws Exception {
 
         List<String> list = FileUtils.readLines(plik);
 
@@ -68,7 +87,9 @@ public class Szyfrator {
 
                     byte[] cypheredText = new byte[bytes.length];
 
-                    algorytm.processBytes(bytes, 0, bytes.length, cypheredText, 0);
+                    StreamCipher streamCipher = getAlgorytm();
+
+                    streamCipher.processBytes(bytes, 0, bytes.length, cypheredText, 0);
 
                     return cypheredText;
 
@@ -92,7 +113,6 @@ public class Szyfrator {
 
 
             String byteString = Integer.toUnsignedString(Byte.toUnsignedInt(bytea), 2);
-
 
 
             // Byte.toString(bytea);
