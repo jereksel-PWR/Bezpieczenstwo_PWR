@@ -1,21 +1,14 @@
 package pl.andrzejressel.bezpieczenstwo.lista2;
 
 import com.google.common.base.Splitter;
-import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang3.StringUtils;
-import pl.andrzejressel.bezpieczenstwo.lista2.dane.StronaWykladowcy;
 import pl.andrzejressel.bezpieczenstwo.lista2.dane.ZrodloDanych;
-import pl.andrzejressel.bezpieczenstwo.lista2.interfaces.Zadanie;
-import pl.andrzejressel.bezpieczenstwo.lista2.kodowanie.ASCII;
 import pl.andrzejressel.bezpieczenstwo.lista2.kodowanie.SystemKodowania;
 
-import java.net.URL;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class Zadanie1 implements Zadanie {
+public class Zadanie1 {
 
     //Rozwiązanie: Ewa Wachowicz: "Lubię testować różne jądra"
 
@@ -27,11 +20,9 @@ public class Zadanie1 implements Zadanie {
 
         List<List<String>> klucze = new ArrayList<>();
 
-        int najdluzszyTekstDlugosc = kryptogramy.stream()
-                .mapToInt(List::size)
-                .max().getAsInt();
+        int dlugoscOstatniegoKryptogramu = kryptogramy.get(kryptogramy.size()-1).size();
 
-        for (int i = 0; i < najdluzszyTekstDlugosc; i++) {
+        for (int i = 0; i < dlugoscOstatniegoKryptogramu; i++) {
 
             final int finalI = i;
             List<String> listaZnakow = kryptogramy.stream()
@@ -88,7 +79,6 @@ public class Zadanie1 implements Zadanie {
 
                     int znak = Integer.parseInt(deszyfracja, 2) ^ Integer.parseInt(mozliwyKlucz, 2);
                     toPrint += ((char) znak + "_");
-                    //toPrint += ((char) znak + "{" + mozliwyKlucz + "}" + "_");
 
                 }
 

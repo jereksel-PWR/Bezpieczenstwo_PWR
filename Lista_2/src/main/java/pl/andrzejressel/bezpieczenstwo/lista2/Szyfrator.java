@@ -3,18 +3,13 @@ package pl.andrzejressel.bezpieczenstwo.lista2;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.RandomUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.bouncycastle.crypto.StreamCipher;
 import org.bouncycastle.crypto.engines.RC4Engine;
 import org.bouncycastle.crypto.engines.Salsa20Engine;
 import org.bouncycastle.crypto.params.KeyParameter;
 import org.bouncycastle.crypto.params.ParametersWithIV;
-import pl.andrzejressel.bezpieczenstwo.lista2.kodowanie.SystemKodowania;
-import scala.xml.PrettyPrinter;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 

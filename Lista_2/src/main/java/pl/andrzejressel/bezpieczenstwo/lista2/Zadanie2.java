@@ -6,7 +6,6 @@ import akka.actor.Props;
 import akka.routing.RoundRobinPool;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
-import pl.andrzejressel.bezpieczenstwo.lista2.interfaces.Zadanie;
 import pl.andrzejressel.bezpieczenstwo.lista2.kodowanie.ASCII;
 import pl.andrzejressel.bezpieczenstwo.lista2.kodowanie.SystemKodowania;
 
@@ -67,7 +66,7 @@ public class Zadanie2 {
 
         long i = 0;
 
-        //Robimy po 10000000
+        //Wysyłamy po 10000000 zapytań
         while (i != max) {
 
             atomicInteger.set(0);

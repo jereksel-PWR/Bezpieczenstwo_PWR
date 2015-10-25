@@ -29,7 +29,6 @@ public class Main {
         String indeks = cmd.getOptionValue("indeks");
         String zadanie = cmd.getOptionValue("zadanie");
         String sposob = cmd.getOptionValue("sposob");
-        String szyfruj = cmd.getOptionValue("szyfruj");
 
 
         ZrodloDanych zrodloDanych;
@@ -86,13 +85,6 @@ public class Main {
                 .required()
                 .longOpt("sposob").build();
 
-        Option szyfruj = Option.builder()
-                .hasArg()
-                .required(false)
-                .desc("Tryb szyfrowania pliku (salsa20/rc4)")
-                .argName("algorytm")
-                .longOpt("szyfruj").build();
-
         Option indeks = Option.builder()
                 .hasArg()
                 .desc("nr. indeksu/plik")
@@ -102,7 +94,6 @@ public class Main {
         options.addOption(zadanie);
         options.addOption(sposob);
         options.addOption(indeks);
-        options.addOption(szyfruj);
 
         return options;
     }
