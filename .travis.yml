@@ -2,10 +2,13 @@ language: cpp
 compiler:
   - gpp
   - clang
-sudo: required
 
-install:
-  - sudo apt-get install libgtest-dev
+addons:
+  apt:
+    packages:
+    - cmake
+    - time
+    - libgtest-dev
 
 script:
   - mkdir build && cd build && cmake ../ && make && ./tests
