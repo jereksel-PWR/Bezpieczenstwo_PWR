@@ -1,0 +1,11 @@
+language: cpp
+compiler:
+  - gpp
+  - clang
+sudo: required
+
+install:
+  - sudo apt-get install libgtest-dev
+
+script:
+  - mkdir build && cd build && cmake ../ && make && ./tests
