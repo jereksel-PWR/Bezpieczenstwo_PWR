@@ -14,6 +14,7 @@ addons:
 before_install:
   - chmod +x install_gtest.sh
   - ./install_gtest.sh
+  - LD_LIBRARY_PATH="~/gtest-1.7.0/build"
 
 script:
   - mkdir build && cd build && cmake ../ && make && ./tests
