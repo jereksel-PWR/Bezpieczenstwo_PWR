@@ -1,6 +1,6 @@
 language: cpp
 compiler:
-  - gpp
+  - gcc
   - clang
 
 addons:
@@ -9,6 +9,10 @@ addons:
     - cmake
     - time
     - libgtest-dev
+    - unzip
+
+before_install:
+  - bash install-gtest.sh
 
 script:
   - mkdir build && cd build && cmake ../ && make && ./tests
