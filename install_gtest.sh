@@ -6,5 +6,5 @@ mkdir gtest-1.7.0/build
 cd gtest-1.7.0/build
 cmake ..
 make
-export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:../build
+export LD_LIBRARY_PATH=.:$LD_LIBRARY_PATH
 echo $LD_LIBRARY_PATH
