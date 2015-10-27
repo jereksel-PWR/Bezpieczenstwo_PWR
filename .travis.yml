@@ -12,7 +12,7 @@ addons:
     - unzip
 
 before_install:
-  - bash install-gtest.sh
+  - bash install_gtest.sh
 
 script:
   - mkdir build && cd build && cmake ../ && make && ./tests
