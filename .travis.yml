@@ -7,7 +7,6 @@ addons:
   apt:
     packages:
     - cmake
-    - time
     - libgtest-dev
     - unzip
 
@@ -15,4 +14,4 @@ before_install:
   - "cd /usr/src/gtest && sudo cmake . && sudo cmake --build . && sudo mv libg* /usr/local/lib/ ; cd -"
 
 script:
-  - mkdir build && cd build && cmake ../ && make && ./tests
+  - "mkdir build && cd build && cmake ../ && make && cd tests && ./libcrypttests"
