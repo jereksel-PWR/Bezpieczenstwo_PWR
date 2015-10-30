@@ -1,12 +1,9 @@
-#include <openssl/conf.h>
-#include <openssl/evp.h>
-#include <openssl/err.h>
-#include <string.h>
-#include <iosfwd>
-#include <fstream>
+#include <libcrypt.h>
+
+int main(char **argc, int argv) {
 
 
-main(char **argc, int argv) {
 
 
+    return 0;
 }

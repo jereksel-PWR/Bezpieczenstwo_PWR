@@ -1,4 +1,4 @@
-#include "libcrypt.h"
+#include "libcrypt.hpp"
 #include <openssl/conf.h>
 #include <openssl/evp.h>
 #include <openssl/err.h>
@@ -10,8 +10,11 @@ void handleErrors(void) {
     abort();
 }
 
-int encrypt(unsigned char *plaintext, int plaintext_len, unsigned char *key,
-            unsigned char *iv, unsigned char *ciphertext) {
+std::string *encrypt(std::string* plaintext_string, unsigned char *key,
+                     unsigned char *iv) {
+
+    unsigned char *ciphertext = new unsigned char[plaintext_string->size() * 2];
+
     EVP_CIPHER_CTX *ctx;
 
     int len;
@@ -32,7 +35,7 @@ int encrypt(unsigned char *plaintext, int plaintext_len, unsigned char *key,
     /* Provide the message to be encrypted, and obtain the encrypted output.
      * EVP_EncryptUpdate can be called multiple times if necessary
      */
-    if (1 != EVP_EncryptUpdate(ctx, ciphertext, &len, plaintext, plaintext_len))
+    if (1 != EVP_EncryptUpdate(ctx, ciphertext, &len, (const unsigned char *) plaintext_string->c_str(), plaintext_string->size()))
         handleErrors();
     ciphertext_len = len;
 
@@ -45,11 +48,14 @@ int encrypt(unsigned char *plaintext, int plaintext_len, unsigned char *key,
     /* Clean up */
     EVP_CIPHER_CTX_free(ctx);
 
-    return ciphertext_len;
+    return new std::string((char *)ciphertext, ciphertext_len);
 }
 
-int decrypt(unsigned char *ciphertext, int ciphertext_len, unsigned char *key,
-            unsigned char *iv, unsigned char *plaintext) {
+std::string *decrypt(std::string* ciphertext_string, unsigned char *key,
+                     unsigned char *iv) {
+
+    unsigned char *plaintext = new unsigned char[ciphertext_string->size()];
+
     EVP_CIPHER_CTX *ctx;
 
     int len;
@@ -70,7 +76,7 @@ int decrypt(unsigned char *ciphertext, int ciphertext_len, unsigned char *key,
     /* Provide the message to be decrypted, and obtain the plaintext output.
      * EVP_DecryptUpdate can be called multiple times if necessary
      */
-    if (1 != EVP_DecryptUpdate(ctx, plaintext, &len, ciphertext, ciphertext_len))
+    if (1 != EVP_DecryptUpdate(ctx, plaintext, &len, (const unsigned char *) ciphertext_string->c_str(), ciphertext_string->size()))
         handleErrors();
     plaintext_len = len;
 
@@ -83,7 +89,7 @@ int decrypt(unsigned char *ciphertext, int ciphertext_len, unsigned char *key,
     /* Clean up */
     EVP_CIPHER_CTX_free(ctx);
 
-    return plaintext_len;
+    return new std::string((char *)plaintext, plaintext_len);
 }
 
 unsigned char *generate_iv() {

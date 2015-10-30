@@ -1,13 +1,14 @@
 #include <gtest/gtest.h>
 #include <openssl/rand.h>
-#include "libcrypt.h"
+#include "libcrypt.hpp"
+
+int sizeOfArray(unsigned char *array);
 
 TEST(LibCrypt, BasicEncDec) {
     // ASSERT_EQ(6, 6);
 
     /* Message to be encrypted */
-    unsigned char *plaintext =
-            (unsigned char *) "The quick brown fox jumps over the lazy dog";
+    std::string plaintext = "The quick brown fox jumps over the lazy dog";
 
     unsigned char *key = new unsigned char[256 / 8];
 
@@ -15,11 +16,27 @@ TEST(LibCrypt, BasicEncDec) {
 
     unsigned char *iv = generate_iv();
 
-    unsigned char *encrypted = new unsigned char[strlen((const char *) plaintext) * 2];
+    std::string* encrypted = encrypt(&plaintext, key, iv);
 
-    encrypt(plaintext, (int) strlen((const char *) plaintext), key, iv, encrypted);
+    // ASSERT_NE(plaintext, encrypted);
 
-    ASSERT_NE(plaintext, encrypted);
+    EXPECT_NE(0, encrypted->compare(plaintext));
+
+    std::string* decrypted = decrypt(encrypted, key, iv);
+
+    EXPECT_EQ(0, plaintext.compare(*decrypted));
+
+}
+
+int sizeOfArray(unsigned char *array) {
+
+    int i = 0;
+
+    while (array[i] != '\0') {
+        i++;
+    }
+
+    return i;
 
 }
 
