@@ -11,10 +11,9 @@ addons:
     - cmake
     - libgtest-dev
     - unzip
-    - libao-dev
-    - libmpg123-dev
 
 before_install:
+  - "sudo -E apt-get -yq --no-install-suggests --no-install-recommends --force-yes install libao-dev libmpg123-dev"
   - "cd /usr/src/gtest && sudo cmake . && sudo cmake --build . && sudo mv libg* /usr/local/lib/ ; cd -"
 
 script:
