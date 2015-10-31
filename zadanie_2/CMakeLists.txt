@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 2.8.12)
-project(zadanie2)
+project(zadanie_2)
 
 find_package(LibAO REQUIRED)
 find_package(MPG123 REQUIRED)
