@@ -4,6 +4,12 @@
 
 #define BITS 8
 
+#if MPG123_API_VERSION < 40
+int mpg123_encsize(int encoding) {
+    return 0;
+}
+#endif
+
 //Kanged from https://hzqtc.github.io/2012/05/play-mp3-with-libmpg123-and-libao.html
 int main(int argc, char *argv[])
 {
