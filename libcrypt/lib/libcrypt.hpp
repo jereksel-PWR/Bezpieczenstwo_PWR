@@ -3,9 +3,8 @@
 
 #include <string>
 
-unsigned char *generate_iv();
+unsigned char *generate_iv(unsigned int bits);
 
-//Ciphertext size | generated iv
 std::string *encrypt(std::string* plaintext_string, unsigned char *key,
                      unsigned char *iv);
 

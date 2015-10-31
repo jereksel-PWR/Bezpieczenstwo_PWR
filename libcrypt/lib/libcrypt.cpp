@@ -92,11 +92,11 @@ std::string *decrypt(std::string* ciphertext_string, unsigned char *key,
     return new std::string((char *)plaintext, plaintext_len);
 }
 
-unsigned char *generate_iv() {
+unsigned char *generate_iv(unsigned int bits) {
 
-    unsigned char *iv = new unsigned char[16];
+    unsigned char *iv = new unsigned char[bits/8];
 
-    RAND_bytes(iv, 16);
+    RAND_bytes(iv, bits/8);
 
     return iv;
 
