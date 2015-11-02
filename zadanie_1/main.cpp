@@ -14,7 +14,7 @@ int main(int argc, char **argv) {
     if (std::string(argv[1]) == "encrypt") {
 
         /* A 128 bit IV */
-        unsigned char *iv = generate_iv(128);
+        auto *iv = generate_iv(128);
 
         printf("Proszę podać hasło\n");
 
@@ -24,16 +24,14 @@ int main(int argc, char **argv) {
         newt.c_lflag &= ~ECHO;
         tcsetattr(STDIN_FILENO, TCSANOW, &newt);
 
-        std::string s;
-        getline(std::cin, s);
+        std::string key;
+        getline(std::cin, key);
 
         tcsetattr(STDIN_FILENO, TCSANOW, &oldt);
 
-        unsigned char *key = (unsigned char *) s.data();
-
         std::string contents = fileToString(argv[2]);
 
-        std::string *encrypted = encrypt(&contents, key, iv);
+        std::string *encrypted = encrypt(&contents, &key, iv);
 
         std::ofstream myfile;
         myfile.open(argv[3], std::ios::trunc | std::ios::binary);
@@ -53,12 +51,10 @@ int main(int argc, char **argv) {
         newt.c_lflag &= ~ECHO;
         tcsetattr(STDIN_FILENO, TCSANOW, &newt);
 
-        std::string s;
-        getline(std::cin, s);
+        std::string key;
+        getline(std::cin, key);
 
         tcsetattr(STDIN_FILENO, TCSANOW, &oldt);
-
-        unsigned char *key = (unsigned char *) s.data();
 
         std::string contents = fileToString(argv[2]);
 
@@ -68,7 +64,7 @@ int main(int argc, char **argv) {
         std::string iv_decode = base64_decode(iv_encode);
         std::string encrypted_decode = base64_decode(encrypted_encode);
 
-        std::string *decrypted = decrypt(&encrypted_decode, key, (unsigned char *) iv_decode.data());
+        std::string *decrypted = decrypt(&encrypted_decode, &key, &iv_decode);
 
         std::cout << *decrypted << std::endl;
 
