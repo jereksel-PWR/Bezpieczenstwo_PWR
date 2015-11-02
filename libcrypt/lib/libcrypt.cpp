@@ -1,17 +1,31 @@
 #include "libcrypt.hpp"
 #include <openssl/conf.h>
 #include <openssl/evp.h>
-#include <openssl/err.h>
 #include <fstream>
 #include <openssl/rand.h>
+#include "OpensslException.h"
+
 
 void handleErrors(void) {
-    ERR_print_errors_fp(stderr);
-    abort();
+    throw OpensslException();
 }
 
-std::string *encrypt(std::string* plaintext_string, unsigned char *key,
-                     unsigned char *iv) {
+std::string *encrypt(std::string *plaintext_string, std::string *key_dangerous,
+                     std::string *iv_dangerous) {
+
+    std::string key = *key_dangerous;
+    std::string iv = *iv_dangerous;
+
+    //256 bit key
+    while (key.size() < 256 / 8) {
+        key.append("a");
+    }
+
+    //128 bit iv
+    while (iv.size() < 256 / 8) {
+        iv.append("a");
+    }
+
 
     unsigned char *ciphertext = new unsigned char[plaintext_string->size() * 2];
 
@@ -29,13 +43,15 @@ std::string *encrypt(std::string* plaintext_string, unsigned char *key,
      * In this example we are using 256 bit AES (i.e. a 256 bit key). The
      * IV size for *most* modes is the same as the block size. For AES this
      * is 128 bits */
-    if (1 != EVP_EncryptInit_ex(ctx, EVP_aes_256_cbc(), NULL, key, iv))
+    if (1 != EVP_EncryptInit_ex(ctx, EVP_aes_256_cbc(), NULL, (const unsigned char *) key.data(),
+                                (const unsigned char *) iv.data()))
         handleErrors();
 
     /* Provide the message to be encrypted, and obtain the encrypted output.
      * EVP_EncryptUpdate can be called multiple times if necessary
      */
-    if (1 != EVP_EncryptUpdate(ctx, ciphertext, &len, (const unsigned char *) plaintext_string->c_str(), plaintext_string->size()))
+    if (1 != EVP_EncryptUpdate(ctx, ciphertext, &len, (const unsigned char *) plaintext_string->c_str(),
+                               plaintext_string->size()))
         handleErrors();
     ciphertext_len = len;
 
@@ -48,11 +64,24 @@ std::string *encrypt(std::string* plaintext_string, unsigned char *key,
     /* Clean up */
     EVP_CIPHER_CTX_free(ctx);
 
-    return new std::string((char *)ciphertext, ciphertext_len);
+    return new std::string((char *) ciphertext, ciphertext_len);
 }
 
-std::string *decrypt(std::string* ciphertext_string, unsigned char *key,
-                     unsigned char *iv) {
+std::string *decrypt(std::string *ciphertext_string, std::string *key_dangerous,
+                     std::string *iv_dangerous) {
+
+    std::string key = *key_dangerous;
+    std::string iv = *iv_dangerous;
+
+    //256 bit key
+    while (key.size() < 256 / 8) {
+        key.append("a");
+    }
+
+    //128 bit iv
+    while (iv.size() < 256 / 8) {
+        iv.append("a");
+    }
 
     unsigned char *plaintext = new unsigned char[ciphertext_string->size()];
 
@@ -70,13 +99,15 @@ std::string *decrypt(std::string* ciphertext_string, unsigned char *key,
      * In this example we are using 256 bit AES (i.e. a 256 bit key). The
      * IV size for *most* modes is the same as the block size. For AES this
      * is 128 bits */
-    if (1 != EVP_DecryptInit_ex(ctx, EVP_aes_256_cbc(), NULL, key, iv))
+    if (1 != EVP_DecryptInit_ex(ctx, EVP_aes_256_cbc(), NULL, (const unsigned char *) key.data(),
+                                (const unsigned char *) iv.data()))
         handleErrors();
 
     /* Provide the message to be decrypted, and obtain the plaintext output.
      * EVP_DecryptUpdate can be called multiple times if necessary
      */
-    if (1 != EVP_DecryptUpdate(ctx, plaintext, &len, (const unsigned char *) ciphertext_string->c_str(), ciphertext_string->size()))
+    if (1 != EVP_DecryptUpdate(ctx, plaintext, &len, (const unsigned char *) ciphertext_string->c_str(),
+                               ciphertext_string->size()))
         handleErrors();
     plaintext_len = len;
 
@@ -89,15 +120,11 @@ std::string *decrypt(std::string* ciphertext_string, unsigned char *key,
     /* Clean up */
     EVP_CIPHER_CTX_free(ctx);
 
-    return new std::string((char *)plaintext, plaintext_len);
+    return new std::string((char *) plaintext, plaintext_len);
 }
 
-unsigned char *generate_iv(unsigned int bits) {
-
-    unsigned char *iv = new unsigned char[bits/8];
-
-    RAND_bytes(iv, bits/8);
-
-    return iv;
-
+std::string *generate_iv(unsigned int bits) {
+    unsigned char *iv = new unsigned char[bits / 8];
+    RAND_bytes(iv, bits / 8);
+    return new std::string((char *) iv);
 }

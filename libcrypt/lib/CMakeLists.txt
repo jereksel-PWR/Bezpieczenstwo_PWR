@@ -4,7 +4,7 @@ project(libcrypt_lib)
 
 find_package(OpenSSL REQUIRED)
 
-add_library(LibCrypt libcrypt.cpp ${OPENSSL_LIBRARIES} base64.cpp)
+add_library(LibCrypt libcrypt.cpp ${OPENSSL_LIBRARIES} base64.cpp keystore.cpp)
 target_link_libraries(LibCrypt ${OPENSSL_LIBRARIES})
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=gnu++0x")
