@@ -6,10 +6,13 @@
 #include <iostream>
 #include <malloc.h>
 
-
 std::string fileToString(char *file_location);
 
 int main(int argc, char **argv) {
+
+    if (argc < 2) {
+        return 0;
+    }
 
     if (std::string(argv[1]) == "encrypt") {
 
@@ -66,7 +69,12 @@ int main(int argc, char **argv) {
 
         std::string *decrypted = decrypt(&encrypted_decode, &key, &iv_decode);
 
-        std::cout << *decrypted << std::endl;
+        //std::cout << *decrypted << std::endl;
+
+        std::ofstream myfile;
+        myfile.open(argv[3], std::ios::trunc | std::ios::binary);
+        myfile << *decrypted;
+        myfile.close();
 
     }
 

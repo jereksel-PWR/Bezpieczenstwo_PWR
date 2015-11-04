@@ -22,7 +22,7 @@ std::string *encrypt(std::string *plaintext_string, std::string *key_dangerous,
     }
 
     //128 bit iv
-    while (iv.size() < 256 / 8) {
+    while (iv.size() < 128 / 8) {
         iv.append("a");
     }
 

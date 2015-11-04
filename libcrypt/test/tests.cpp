@@ -1,9 +1,8 @@
 #include <gtest/gtest.h>
-#include <openssl/rand.h>
 #include <base64.hpp>
-#include "libcrypt.hpp"
-#include "keystore.hpp"
-#include "OpensslException.h"
+#include <libcrypt.hpp>
+#include <keystore.hpp>
+#include <OpensslException.h>
 
 TEST(Libcrypt, BasicEncDec) {
     /* Message to be encrypted */
@@ -107,6 +106,18 @@ TEST(KeyStore, BasicTest) {
     myKeystore->addKey("Key1", "MyVeryImportantKey", "SecretPassword");
 
     EXPECT_EQ(0, myKeystore->getKey("Key1", "SecretPassword")->compare(std::string("MyVeryImportantKey")));
+}
+
+TEST(KeyStore, FromString) {
+    std::string* string = new std::string("key_1-IV_1-EncryptedKey1-key_2-IV_2-EncryptedKey2");
+
+    keystore *myKeystore = keystore::loadFromString(string);
+
+    EXPECT_TRUE("IV_1" == *myKeystore->getPair("key_1")->second);
+    EXPECT_TRUE("EncryptedKey1" == *myKeystore->getPair("key_1")->first);
+
+    EXPECT_TRUE("IV_2" == *myKeystore->getPair("key_2")->second);
+    EXPECT_TRUE("EncryptedKey2" == *myKeystore->getPair("key_2")->first);
 }
 
 int main(int argc, char **argv) {
