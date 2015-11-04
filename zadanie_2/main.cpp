@@ -10,9 +10,27 @@ int mpg123_encsize(int encoding) {
 }
 #endif
 
+std::string *fileToString(char *file_location) {
+
+    char *buffer = NULL;
+    long length;
+
+    FILE *file = fopen(file_location, "rb");
+
+    fseek(file, 0, SEEK_END);
+    length = ftell(file);
+    fseek(file, 0, SEEK_SET);
+    buffer = (char *) malloc(length * sizeof(char));
+    if (buffer)
+        fread(buffer, 1, length, file);
+    fclose(file);
+
+    return new std::string(buffer, length);
+
+}
+
 //Kanged from https://hzqtc.github.io/2012/05/play-mp3-with-libmpg123-and-libao.html
-int main(int argc, char *argv[])
-{
+int main(int argc, char *argv[]) {
     mpg123_handle *mh;
     unsigned char *buffer;
     size_t buffer_size;
@@ -26,7 +44,7 @@ int main(int argc, char *argv[])
     int channels, encoding;
     long rate;
 
-    if(argc < 2)
+    if (argc < 2)
         exit(0);
 
     /* initializations */
@@ -35,10 +53,13 @@ int main(int argc, char *argv[])
     mpg123_init();
     mh = mpg123_new(NULL, &err);
     buffer_size = mpg123_outblock(mh);
-    buffer = (unsigned char*) malloc(buffer_size * sizeof(unsigned char));
+    buffer = (unsigned char *) malloc(buffer_size * sizeof(unsigned char));
+    
+    mpg123_open_feed(mh);
+    std::string *music = fileToString(argv[1]);
 
-    /* open the file and get the decoding format */
-    mpg123_open(mh, argv[1]);
+    mpg123_feed(mh, (const unsigned char *) music->data(), music->size());
+
     mpg123_getformat(mh, &rate, &channels, &encoding);
 
     /* set the output format and open the output device */

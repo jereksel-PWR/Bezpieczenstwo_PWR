@@ -1,2 +1,0 @@
-This is test file
-It'll be encrypted during tests
