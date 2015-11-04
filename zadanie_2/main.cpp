@@ -54,7 +54,7 @@ int main(int argc, char *argv[]) {
     mh = mpg123_new(NULL, &err);
     buffer_size = mpg123_outblock(mh);
     buffer = (unsigned char *) malloc(buffer_size * sizeof(unsigned char));
-    
+
     mpg123_open_feed(mh);
     std::string *music = fileToString(argv[1]);
 
