@@ -49,7 +49,7 @@ void keystore::saveToFile(char *file) {
 
     }
 
-    data->pop_back();
+    data->erase(data->size()-1, 1);;
 
     std::ofstream fileStream;
     fileStream.open(file, std::ios::trunc | std::ios::binary);
