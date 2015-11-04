@@ -92,7 +92,7 @@ TEST(Libcrypt, IVWithZero) {
 
 
 TEST(Base64, TestFromWebsite) {
-    const std::string s = "ADP GmbH\nAnalyse Design & Programmierung\nGesellschaft mit beschränkter Haftung";
+    const std::string s = "ADP GmbH\nAnalyse Design & Programmierung\nGesellschaft mit beschrï¿½nkter Haftung";
 
     std::string encoded = base64_encode(s);
     std::string decoded = base64_decode(encoded);
@@ -118,6 +118,12 @@ TEST(KeyStore, FromString) {
 
     EXPECT_TRUE("IV_2" == *myKeystore->getPair("key_2")->second);
     EXPECT_TRUE("EncryptedKey2" == *myKeystore->getPair("key_2")->first);
+}
+
+TEST(KeyStore, EmptyString) {
+    std::string* string = new std::string("");
+
+    EXPECT_NO_FATAL_FAILURE(keystore::loadFromString(string));
 }
 
 int main(int argc, char **argv) {

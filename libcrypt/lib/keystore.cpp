@@ -49,6 +49,7 @@ void keystore::saveToFile(char *file) {
 
     }
 
+    //Remove last character
     data->erase(data->size()-1, 1);;
 
     std::ofstream fileStream;
@@ -63,6 +64,10 @@ keystore *keystore::loadFromFile(char *file) {
 }
 
 keystore *keystore::loadFromString(std::string *string) {
+
+    if (string->empty()) {
+        return new keystore();
+    }
 
     std::vector<std::string> splitVec; // #2: Search for tokens
     boost::split(splitVec, *string, boost::is_any_of("-"),
