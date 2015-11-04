@@ -2,11 +2,8 @@
 #include <libcrypt.hpp>
 #include <base64.hpp>
 #include <fstream>
-#include <malloc.h>
+#include <utils.hpp>
 #include <boost/algorithm/string.hpp>
-
-//Works nice with \0 in files
-std::string *fileToString(char *file_location);
 
 void keystore::addKey(std::string name, std::string key, std::string password) {
 
@@ -50,7 +47,7 @@ void keystore::saveToFile(char *file) {
     }
 
     //Remove last character
-    data->erase(data->size()-1, 1);;
+    data->erase(data->size() - 1, 1);;
 
     std::ofstream fileStream;
     fileStream.open(file, std::ios::trunc | std::ios::binary);
@@ -85,26 +82,6 @@ keystore *keystore::loadFromString(std::string *string) {
     }
 
     return new keystore(map);
-}
-
-//Works nice with \0 in files
-std::string *fileToString(char *file_location) {
-
-    char *buffer = NULL;
-    long length;
-
-    FILE *file = fopen(file_location, "rb");
-
-    fseek(file, 0, SEEK_END);
-    length = ftell(file);
-    fseek(file, 0, SEEK_SET);
-    buffer = (char *) malloc(length * sizeof(char));
-    if (buffer)
-        fread(buffer, 1, length, file);
-    fclose(file);
-
-    return new std::string(buffer, length);
-
 }
 
 std::pair<std::string *, std::string *> *keystore::getPair(std::string name) {

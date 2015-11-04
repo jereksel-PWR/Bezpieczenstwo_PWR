@@ -5,8 +5,7 @@
 #include <sys/unistd.h>
 #include <iostream>
 #include <malloc.h>
-
-std::string fileToString(char *file_location);
+#include <utils.hpp>
 
 int main(int argc, char **argv) {
 
@@ -32,9 +31,9 @@ int main(int argc, char **argv) {
 
         tcsetattr(STDIN_FILENO, TCSANOW, &oldt);
 
-        std::string contents = fileToString(argv[2]);
+        std::string *contents = fileToString(argv[2]);
 
-        std::string *encrypted = encrypt(&contents, &key, iv);
+        std::string *encrypted = encrypt(contents, &key, iv);
 
         std::ofstream myfile;
         myfile.open(argv[3], std::ios::trunc | std::ios::binary);
@@ -59,10 +58,10 @@ int main(int argc, char **argv) {
 
         tcsetattr(STDIN_FILENO, TCSANOW, &oldt);
 
-        std::string contents = fileToString(argv[2]);
+        std::string *contents = fileToString(argv[2]);
 
-        std::string iv_encode = contents.substr(0, contents.find("-"));
-        std::string encrypted_encode = contents.erase(0, iv_encode.size() + 1);
+        std::string iv_encode = contents->substr(0, contents->find("-"));
+        std::string encrypted_encode = contents->erase(0, iv_encode.size() + 1);
 
         std::string iv_decode = base64_decode(iv_encode);
         std::string encrypted_decode = base64_decode(encrypted_encode);
@@ -79,24 +78,4 @@ int main(int argc, char **argv) {
     }
 
     return 0;
-}
-
-//Works nice with \0 in files
-std::string fileToString(char *file_location) {
-
-    char *buffer = NULL;
-    long length;
-
-    FILE *file = fopen(file_location, "rb");
-
-    fseek(file, 0, SEEK_END);
-    length = ftell(file);
-    fseek(file, 0, SEEK_SET);
-    buffer = (char *) malloc(length * sizeof(char));
-    if (buffer)
-        fread(buffer, 1, length, file);
-    fclose(file);
-
-    return std::string(buffer, length);
-
 }
