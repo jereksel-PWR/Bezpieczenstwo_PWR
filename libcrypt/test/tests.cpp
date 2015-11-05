@@ -107,23 +107,39 @@ TEST(KeyStore, BasicTest) {
 
     EXPECT_EQ(0, myKeystore->getKey("Key1", "SecretPassword")->compare(std::string("MyVeryImportantKey")));
 }
-
+/*
 TEST(KeyStore, FromString) {
     std::string* string = new std::string("key_1-IV_1-EncryptedKey1-key_2-IV_2-EncryptedKey2");
 
     keystore *myKeystore = keystore::loadFromString(string);
 
-    EXPECT_TRUE("IV_1" == *myKeystore->getPair("key_1")->second);
-    EXPECT_TRUE("EncryptedKey1" == *myKeystore->getPair("key_1")->first);
+    EXPECT_TRUE("IV_1" == *myKeystore->directGetPair("key_1")->second);
+    EXPECT_TRUE("EncryptedKey1" == *myKeystore->directGetPair("key_1")->first);
 
-    EXPECT_TRUE("IV_2" == *myKeystore->getPair("key_2")->second);
-    EXPECT_TRUE("EncryptedKey2" == *myKeystore->getPair("key_2")->first);
+    EXPECT_TRUE("IV_2" == *myKeystore->directGetPair("key_2")->second);
+    EXPECT_TRUE("EncryptedKey2" == *myKeystore->directGetPair("key_2")->first);
 }
-
+*/
 TEST(KeyStore, EmptyString) {
     std::string* string = new std::string("");
 
     EXPECT_NO_FATAL_FAILURE(keystore::loadFromString(string));
+}
+
+TEST(KeyStore, NamesTest) {
+    keystore *myKeystore = new keystore();
+
+    myKeystore->addGeneratedKey("1", "1");
+    myKeystore->addGeneratedKey("2", "2");
+
+    auto namesVector = (myKeystore->getNames());
+
+    ASSERT_EQ(2, namesVector->size());
+
+    ASSERT_TRUE(*namesVector->data()[0] == *new std::string("1") || *namesVector->data()[0] == *new std::string("2"));
+    ASSERT_TRUE(*namesVector->data()[1] == *new std::string("1") || *namesVector->data()[1] == *new std::string("2"));
+    ASSERT_TRUE(*namesVector->data()[0] != *namesVector->data()[1]);
+
 }
 
 int main(int argc, char **argv) {

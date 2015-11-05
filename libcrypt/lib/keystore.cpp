@@ -4,10 +4,15 @@
 #include <fstream>
 #include <utils.hpp>
 #include <boost/algorithm/string.hpp>
+#include <iostream>
+
+void keystore::addGeneratedKey(std::string name, std::string password) {
+    addKey(name, *generate_iv(256), password);
+}
 
 void keystore::addKey(std::string name, std::string key, std::string password) {
 
-    std::string *random_iv = new std::string("01234567890123456");
+    std::string *random_iv = generate_iv(128);
 
     std::string *zaszyfrowany_klucz = encrypt(&key, &password, random_iv);
 
@@ -23,13 +28,11 @@ std::string *keystore::getKey(std::string name, std::string password) {
         return nullptr;
     }
 
-    std::string *random_iv = new std::string("01234567890123456");
-
-    return decrypt(myPair->first, &password, random_iv);
+    return decrypt(myPair->first, &password, myPair->second);
 }
 
 
-//<NAZWA>$<IV>$<KLUCZ>
+//<NAZWA>-<IV>-<KLUCZ>
 void keystore::saveToFile(char *file) {
 
     std::string *data = new std::string;
@@ -47,7 +50,9 @@ void keystore::saveToFile(char *file) {
     }
 
     //Remove last character
-    data->erase(data->size() - 1, 1);;
+    if (!data->empty()) {
+        data->erase(data->size() - 1, 1);;
+    }
 
     std::ofstream fileStream;
     fileStream.open(file, std::ios::trunc | std::ios::binary);
@@ -66,24 +71,42 @@ keystore *keystore::loadFromString(std::string *string) {
         return new keystore();
     }
 
-    std::vector<std::string> splitVec; // #2: Search for tokens
+    std::vector<std::string> splitVec;
     boost::split(splitVec, *string, boost::is_any_of("-"),
-                 boost::token_compress_on); // splitVec == { "hello abc","ABC","aBc goodbye" }
+                 boost::token_compress_on);
 
 
-    int i = 0;
+    size_t i = 0;
 
     keyStoreMap map;
 
     while (i < splitVec.size()) {
-        map[splitVec[i]] = new std::pair<std::string *, std::string *>(new std::string(splitVec[i + 2]),
-                                                                       new std::string(splitVec[i + 1]));
+        map[base64_decode(splitVec[i])] = new std::pair<std::string *, std::string *>(
+                new std::string(base64_decode(splitVec[i + 2])),
+                new std::string(base64_decode(splitVec[i + 1])));
         i = i + 3;
     }
 
     return new keystore(map);
 }
 
-std::pair<std::string *, std::string *> *keystore::getPair(std::string name) {
+std::pair<std::string *, std::string *> *keystore::directGetPair(std::string name) {
     return keysMap[name];
+}
+
+std::vector<std::string *> *keystore::getNames() {
+
+    std::vector<std::string *> *vector = new std::vector<std::string *>;
+
+    for (keyStoreMap::iterator it = keysMap.begin(); it != keysMap.end(); ++it) {
+        vector->push_back(new std::string(it->first));
+    }
+
+    return vector;
+}
+
+void keystore::removeKey(std::string name) {
+   // std::cout << "removing: " << name << std::endl;
+    auto it = keysMap.find(name);
+    keysMap.erase(it);
 }

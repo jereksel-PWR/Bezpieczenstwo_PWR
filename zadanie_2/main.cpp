@@ -1,6 +1,13 @@
 #include <ao/ao.h>
 #include <mpg123.h>
 #include <iostream>
+#include <utils.hpp>
+#include <fstream>
+#include <base64.hpp>
+#include <libcrypt.hpp>
+#include <vector>
+#include <boost/algorithm/string.hpp>
+#include <keystore.hpp>
 
 #define BITS 8
 
@@ -11,27 +18,81 @@ int mpg123_encsize(int encoding) {
 }
 #endif
 
-std::string *fileToString(char *file_location) {
+//Uber tajny klucz
+std::string key = std::string("supertajnykluczdoodtwarzaczamp3_");
+std::string plik = std::string(".config");
 
-    char *buffer = NULL;
-    long length;
-
-    FILE *file = fopen(file_location, "rb");
-
-    fseek(file, 0, SEEK_END);
-    length = ftell(file);
-    fseek(file, 0, SEEK_SET);
-    buffer = (char *) malloc(length * sizeof(char));
-    if (buffer)
-        fread(buffer, 1, length, file);
-    fclose(file);
-
-    return new std::string(buffer, length);
-
-}
 
 //Kanged from https://hzqtc.github.io/2012/05/play-mp3-with-libmpg123-and-libao.html
 int main(int argc, char *argv[]) {
+
+    if (argc > 1 && std::string(argv[1]) == "init") {
+
+        auto sciezka = std::string(argv[2]);
+        auto id_klucza = std::string(argv[3]);
+
+        std::cout << "Podaj hasło do klucza" << std::endl;
+        auto haslo = getPasswordSecurely();
+
+        std::cout << "Podaj PIN" << std::endl;
+        auto pin = getPasswordSecurely();
+
+        auto toWrite = std::string();
+
+        toWrite.append(base64_encode(sciezka));
+        toWrite.append("-");
+        toWrite.append(base64_encode(id_klucza));
+        toWrite.append("-");
+        toWrite.append(base64_encode(*haslo));
+        toWrite.append("-");
+        toWrite.append(base64_encode(*pin));
+
+
+        std::ofstream fileStream;
+        fileStream.open(plik, std::ios::trunc | std::ios::binary);
+        fileStream << *encrypt(&toWrite, &key, &key);
+        fileStream.close();
+
+
+        return 0;
+    }
+
+
+    auto configFile = fileToString((char *) plik.data());
+
+    if (configFile->empty()) {
+        std::cout << "No config file" << std::endl;
+        return -1;
+    }
+
+
+    auto configFileDecrypted = decrypt(configFile, &key, &key);
+
+    std::vector<std::string> splitVec;
+    boost::split(splitVec, *configFileDecrypted, boost::is_any_of("-"),
+                 boost::token_compress_on);
+
+    auto sciezka = base64_decode(splitVec.data()[0]);
+    auto id_klucza = base64_decode(splitVec.data()[1]);
+    auto haslo = base64_decode(splitVec.data()[2]);
+    auto pin = base64_decode(splitVec.data()[3]);
+
+  //  std::cout << " " << sciezka << " " << id_klucza << " " << haslo << " " << pin << std::endl;
+
+    auto keystore = keystore::loadFromFile((char *) sciezka.data());
+
+    auto klucz = keystore->getKey(id_klucza, haslo);
+
+    std::string *encryptedMusic = fileToString(argv[1]);
+
+    std::string iv_encode = encryptedMusic->substr(0, encryptedMusic->find("-"));
+    std::string encrypted_encode = encryptedMusic->erase(0, iv_encode.size() + 1);
+
+    std::string iv_decode = base64_decode(iv_encode);
+    std::string encrypted_decode = base64_decode(encrypted_encode);
+
+    std::string *decryptedMusic = decrypt(&encrypted_decode, klucz, &iv_decode);
+
     mpg123_handle *mh;
     unsigned char *buffer;
     size_t buffer_size;
@@ -45,9 +106,6 @@ int main(int argc, char *argv[]) {
     int channels, encoding;
     long rate;
 
-    if (argc < 2)
-        exit(0);
-
     /* initializations */
     ao_initialize();
     driver = ao_default_driver_id();
@@ -57,9 +115,9 @@ int main(int argc, char *argv[]) {
     buffer = (unsigned char *) malloc(buffer_size * sizeof(unsigned char));
 
     mpg123_open_feed(mh);
-    std::string *music = fileToString(argv[1]);
 
-    mpg123_feed(mh, (const unsigned char *) music->data(), music->size());
+
+    mpg123_feed(mh, (const unsigned char *) decryptedMusic->data(), decryptedMusic->size());
 
     mpg123_getformat(mh, &rate, &channels, &encoding);
 
