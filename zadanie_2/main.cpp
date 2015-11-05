@@ -1,6 +1,7 @@
 #include <ao/ao.h>
 #include <mpg123.h>
 #include <iostream>
+#include <utils.hpp>
 
 #define BITS 8
 
@@ -11,24 +12,8 @@ int mpg123_encsize(int encoding) {
 }
 #endif
 
-std::string *fileToString(char *file_location) {
-
-    char *buffer = NULL;
-    long length;
-
-    FILE *file = fopen(file_location, "rb");
-
-    fseek(file, 0, SEEK_END);
-    length = ftell(file);
-    fseek(file, 0, SEEK_SET);
-    buffer = (char *) malloc(length * sizeof(char));
-    if (buffer)
-        fread(buffer, 1, length, file);
-    fclose(file);
-
-    return new std::string(buffer, length);
-
-}
+//Uber tajny klucz
+std::string key = std::string("supertajnykluczdoodtwarzaczamp3_");
 
 //Kanged from https://hzqtc.github.io/2012/05/play-mp3-with-libmpg123-and-libao.html
 int main(int argc, char *argv[]) {

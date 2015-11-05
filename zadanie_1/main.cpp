@@ -4,13 +4,20 @@
 #include <sys/termios.h>
 #include <sys/unistd.h>
 #include <iostream>
-#include <malloc.h>
 #include <utils.hpp>
+#include <keystore.hpp>
+
+void printHelp() {
+    std::cout
+    << "Usage:" << std::endl
+    << "zadanie1 <encrypt/decrypt> <keystore> <id klucza> <plik> <plik wynikowy>" << std::endl;
+}
 
 int main(int argc, char **argv) {
 
-    if (argc < 2) {
-        return 0;
+    if (argc != 6) {
+        printHelp();
+        return -1;
     }
 
     if (std::string(argv[1]) == "encrypt") {
@@ -20,23 +27,20 @@ int main(int argc, char **argv) {
 
         printf("Proszę podać hasło\n");
 
-        termios oldt;
-        tcgetattr(STDIN_FILENO, &oldt);
-        termios newt = oldt;
-        newt.c_lflag &= ~ECHO;
-        tcsetattr(STDIN_FILENO, TCSANOW, &newt);
+        auto* password = getPasswordSecurely();
 
-        std::string key;
-        getline(std::cin, key);
+        std::string *contents = fileToString(argv[4]);
 
-        tcsetattr(STDIN_FILENO, TCSANOW, &oldt);
+        auto keystore = keystore::loadFromFile(argv[2]);
 
-        std::string *contents = fileToString(argv[2]);
+        auto temp = new std::string(argv[3]);
 
-        std::string *encrypted = encrypt(contents, &key, iv);
+        std::string *key = keystore->getKey(*temp, *password);
+
+        std::string *encrypted = encrypt(contents, key, iv);
 
         std::ofstream myfile;
-        myfile.open(argv[3], std::ios::trunc | std::ios::binary);
+        myfile.open(argv[5], std::ios::trunc | std::ios::binary);
         myfile << base64_encode(std::string((char *) iv));
         myfile << "-";
         myfile << base64_encode(*encrypted);
@@ -47,18 +51,9 @@ int main(int argc, char **argv) {
 
         printf("Proszę podać hasło\n");
 
-        termios oldt;
-        tcgetattr(STDIN_FILENO, &oldt);
-        termios newt = oldt;
-        newt.c_lflag &= ~ECHO;
-        tcsetattr(STDIN_FILENO, TCSANOW, &newt);
+        std::string *password = getPasswordSecurely();
 
-        std::string key;
-        getline(std::cin, key);
-
-        tcsetattr(STDIN_FILENO, TCSANOW, &oldt);
-
-        std::string *contents = fileToString(argv[2]);
+        std::string *contents = fileToString(argv[4]);
 
         std::string iv_encode = contents->substr(0, contents->find("-"));
         std::string encrypted_encode = contents->erase(0, iv_encode.size() + 1);
@@ -66,12 +61,16 @@ int main(int argc, char **argv) {
         std::string iv_decode = base64_decode(iv_encode);
         std::string encrypted_decode = base64_decode(encrypted_encode);
 
-        std::string *decrypted = decrypt(&encrypted_decode, &key, &iv_decode);
+        auto keystore = keystore::loadFromFile(argv[2]);
 
-        //std::cout << *decrypted << std::endl;
+        std::string *key = keystore->getKey(std::string(argv[3]), *password);
+
+        std::string *decrypted = decrypt(&encrypted_decode, key, &iv_decode);
+
+        // std::cout << *decrypted << std::endl;
 
         std::ofstream myfile;
-        myfile.open(argv[3], std::ios::trunc | std::ios::binary);
+        myfile.open(argv[5], std::ios::trunc | std::ios::binary);
         myfile << *decrypted;
         myfile.close();
 
