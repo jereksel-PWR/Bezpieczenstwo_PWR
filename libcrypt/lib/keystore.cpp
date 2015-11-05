@@ -71,9 +71,9 @@ keystore *keystore::loadFromString(std::string *string) {
         return new keystore();
     }
 
-    std::vector<std::string> splitVec; // #2: Search for tokens
+    std::vector<std::string> splitVec;
     boost::split(splitVec, *string, boost::is_any_of("-"),
-                 boost::token_compress_on); // splitVec == { "hello abc","ABC","aBc goodbye" }
+                 boost::token_compress_on);
 
 
     size_t i = 0;
