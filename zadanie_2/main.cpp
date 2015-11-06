@@ -8,6 +8,7 @@
 #include <vector>
 #include <boost/algorithm/string.hpp>
 #include <keystore.hpp>
+#include <OpensslException.h>
 
 #define BITS 8
 
@@ -20,24 +21,61 @@ int mpg123_encsize(int encoding) {
 
 //Uber tajny klucz
 std::string key = std::string("supertajnykluczdoodtwarzaczamp3_");
-std::string plik = std::string(".config");
+std::string plik = std::string(".mp3config");
 
+void usage() {
+    std::cout << "zadanie2 init <keystore> <id klucza>" << std::endl;
+}
+
+void usageWithConfig() {
+    std::cout << "zadanie2 <zaszyfrowany plik>" << std::endl;
+}
 
 //Kanged from https://hzqtc.github.io/2012/05/play-mp3-with-libmpg123-and-libao.html
 int main(int argc, char *argv[]) {
+
+
 
     if (argc > 1 && std::string(argv[1]) == "init") {
 
         auto sciezka = std::string(argv[2]);
         auto id_klucza = std::string(argv[3]);
 
+        //Sprawdzamy, czy keystore, klucz i hasło się zgadzają
+
+        FILE *file = fopen(sciezka.data(), "rb");
+
+        if (file == nullptr) {
+            std::cout << "Ścieżka do keystora jest niepoprawna" << std::endl;
+            return -1;
+        }
+
+        keystore* keystore1 = keystore::loadFromFile((char *) sciezka.data());
+
+        if (!keystore1->checkKeyExistence(id_klucza)) {
+            std::cout << "Nazwa klucza jest niepoprawna" << std::endl;
+            return -1;
+        }
+
+
         std::cout << "Podaj hasło do klucza" << std::endl;
         auto haslo = getPasswordSecurely();
+
+
+        try {
+            keystore1->getKey(id_klucza, *haslo);
+        } catch (OpensslException &e) {
+            std::cout << "Błędne hasło" << std::endl;
+            return -1;
+        }
+
 
         std::cout << "Podaj PIN" << std::endl;
         auto pin = getPasswordSecurely();
 
         auto toWrite = std::string();
+
+
 
         toWrite.append(base64_encode(sciezka));
         toWrite.append("-");
@@ -58,13 +96,26 @@ int main(int argc, char *argv[]) {
     }
 
 
+    FILE *file = fopen(plik.data(), "rb");
+
+    if (file == nullptr) {
+        usage();
+        return -1;
+    }
+
+    fclose(file);
+
+    if (argc == 1) {
+        usageWithConfig();
+        return -1;
+    }
+
     auto configFile = fileToString((char *) plik.data());
 
     if (configFile->empty()) {
         std::cout << "No config file" << std::endl;
         return -1;
     }
-
 
     auto configFileDecrypted = decrypt(configFile, &key, &key);
 
@@ -75,9 +126,17 @@ int main(int argc, char *argv[]) {
     auto sciezka = base64_decode(splitVec.data()[0]);
     auto id_klucza = base64_decode(splitVec.data()[1]);
     auto haslo = base64_decode(splitVec.data()[2]);
-    auto pin = base64_decode(splitVec.data()[3]);
+    std::string pin = base64_decode(splitVec.data()[3]);
 
-  //  std::cout << " " << sciezka << " " << id_klucza << " " << haslo << " " << pin << std::endl;
+    std::cout << "Podaj PIN" << std::endl;
+
+    std::string* pinGet = getPasswordSecurely();
+
+    if (pin != *pinGet) {
+        std::cout << "Nieprawidłowy PIN" << std::endl;
+        return -1;
+    }
+
 
     auto keystore = keystore::loadFromFile((char *) sciezka.data());
 

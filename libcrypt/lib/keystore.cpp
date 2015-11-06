@@ -106,7 +106,11 @@ std::vector<std::string *> *keystore::getNames() {
 }
 
 void keystore::removeKey(std::string name) {
-   // std::cout << "removing: " << name << std::endl;
+    // std::cout << "removing: " << name << std::endl;
     auto it = keysMap.find(name);
     keysMap.erase(it);
+}
+
+bool keystore::checkKeyExistence(std::string name) {
+    return keysMap[name] == nullptr ? false : true;
 }

@@ -2,6 +2,7 @@
 #include <keystore.hpp>
 #include <iostream>
 #include <utils.hpp>
+#include <OpensslException.h>
 
 
 void printHelp() {
@@ -65,7 +66,14 @@ int main(int argc, char **argv) {
 
         keystore *myKeystore = keystore::loadFromFile(argv[3]);
 
-        myKeystore->getKey(std::string(argv[2]), *key);
+        try {
+            myKeystore->getKey(std::string(argv[2]), *key);
+        } catch (OpensslException &e) {
+            std::cout << "Błędne hasło" << std::endl;
+            return -1;
+        }
+
+        std::cout << "Prawidłowe hasło" << std::endl;
 
     } else {
         printHelp();

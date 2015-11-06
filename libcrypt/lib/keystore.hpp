@@ -26,8 +26,6 @@ public:
     //Direct access to map (mostly for tests)
     std::pair<std::string *, std::string *> *directGetPair(std::string name);
 
-    void directPutPair(std::pair<std::string *, std::string *> *pair);
-
     void removeKey(std::string name);
 
     void saveToFile(char *file);
@@ -39,6 +37,9 @@ public:
     static keystore *loadFromString(std::string *string);
 
     void addGeneratedKey(std::string name, std::string password);
+
+    bool checkKeyExistence(std::string name);
+
 };
 
 
