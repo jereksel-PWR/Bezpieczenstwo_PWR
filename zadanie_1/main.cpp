@@ -1,26 +1,30 @@
 #include <libcrypt.hpp>
 #include <base64.hpp>
 #include <fstream>
-#include <sys/termios.h>
-#include <sys/unistd.h>
 #include <iostream>
 #include <utils.hpp>
 #include <keystore.hpp>
+#include <openssl/evp.h>
+
+const EVP_CIPHER* stringToEVP(std::string string);
 
 void printHelp() {
     std::cout
     << "Usage:" << std::endl
-    << "zadanie1 <encrypt/decrypt> <keystore> <id klucza> <plik> <plik wynikowy>" << std::endl;
+    << "zadanie1 <encrypt/decrypt> <keystore> <id klucza> <sposob szyfrowania> <plik> <plik wynikowy>" << std::endl
+    << "Sposoby szyfrowania: CBC (używany w odtwarzaczu), CTR, OFB" << std::endl;
 }
 
 int main(int argc, char **argv) {
 
-    if (argc != 6) {
+    if (argc != 7) {
         printHelp();
         return -1;
     }
 
     if (std::string(argv[1]) == "encrypt") {
+
+        auto cipher = stringToEVP(std::string(argv[4]));
 
         /* A 128 bit IV */
         auto *iv = generate_iv(128);
@@ -29,17 +33,17 @@ int main(int argc, char **argv) {
 
         auto *password = getPasswordSecurely();
 
-        std::string *contents = fileToString(argv[4]);
+        std::string *contents = fileToString(argv[5]);
 
         auto keystore = keystore::loadFromFile(argv[2]);
 
-        auto temp = new std::string(argv[3]);
+        auto keyID = new std::string(argv[3]);
 
-        std::string *key = keystore->getKey(*temp, *password);
+        std::string *key = keystore->getKey(*keyID, *password);
 
-        std::string *encrypted = encrypt(contents, key, iv);
+        std::string *encrypted = encrypt(contents, key, iv, cipher);
 
-        std::ofstream myfile(argv[5], std::ios::trunc | std::ios::binary);
+        std::ofstream myfile(argv[6], std::ios::trunc | std::ios::binary);
         myfile << base64_encode(*iv);
         myfile << "-";
         myfile << base64_encode(*encrypted);
@@ -48,11 +52,13 @@ int main(int argc, char **argv) {
 
     } else if (std::string(argv[1]) == "decrypt") {
 
+        auto cipher = stringToEVP(std::string(argv[4]));
+
         printf("Proszę podać hasło\n");
 
         std::string *password = getPasswordSecurely();
 
-        std::string *contents = fileToString(argv[4]);
+        std::string *contents = fileToString(argv[5]);
 
         std::string iv_encode = contents->substr(0, contents->find("-"));
         std::string encrypted_encode = contents->substr(iv_encode.size() + 1, contents->size());
@@ -62,15 +68,33 @@ int main(int argc, char **argv) {
 
         auto keystore = keystore::loadFromFile(argv[2]);
 
-        std::string *key = keystore->getKey(std::string(argv[3]), *password);
+        auto keyID = new std::string(argv[3]);
 
-        std::string *decrypted = decrypt(&encrypted_decode, key, &iv_decode);
+        std::string *key = keystore->getKey(*keyID, *password);
 
-        std::ofstream myfile(argv[5], std::ios::trunc | std::ios::binary);
+        std::string *decrypted = decrypt(&encrypted_decode, key, &iv_decode, cipher);
+
+        std::ofstream myfile(argv[6], std::ios::trunc | std::ios::binary);
         myfile << *decrypted;
         myfile.close();
 
     }
 
     return 0;
+}
+
+const EVP_CIPHER* stringToEVP(std::string string) {
+
+    if (string == "CBC") {
+        return EVP_aes_256_cbc();
+    } else if (string == "CTR") {
+        return EVP_aes_256_ctr();
+    } else if (string == "OFB") {
+        return EVP_aes_256_ofb();
+    }
+
+    printf("Brak podanego sposobu szyfrowania\n");
+
+    return nullptr;
+
 }

@@ -178,7 +178,6 @@ int main(int argc, char *argv[]) {
             song1->forward();
         }
 
-        //std::cout << std::endl << c << std::endl;
     }
 
 

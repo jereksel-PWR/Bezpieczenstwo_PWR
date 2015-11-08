@@ -112,5 +112,5 @@ void keystore::removeKey(std::string name) {
 }
 
 bool keystore::checkKeyExistence(std::string name) {
-    return keysMap[name] == nullptr ? false : true;
+    return keysMap[name] != nullptr;
 }
