@@ -2,7 +2,6 @@
 #define PROJECT_SONG_H
 
 #include <string>
-#include <boost/thread/lockable_concepts.hpp>
 #include <boost/thread/pthread/mutex.hpp>
 
 class song {
