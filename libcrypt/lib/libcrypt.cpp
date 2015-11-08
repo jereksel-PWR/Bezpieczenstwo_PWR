@@ -83,7 +83,7 @@ std::string *decrypt(std::string *ciphertext_string, std::string *key_dangerous,
         iv.append("a");
     }
 
-    unsigned char *plaintext = new unsigned char[ciphertext_string->size()];
+    unsigned char *plaintext = new unsigned char[ciphertext_string->size()*2];
 
     EVP_CIPHER_CTX *ctx;
 

@@ -27,7 +27,7 @@ int main(int argc, char **argv) {
 
         printf("Proszę podać hasło\n");
 
-        auto* password = getPasswordSecurely();
+        auto *password = getPasswordSecurely();
 
         std::string *contents = fileToString(argv[4]);
 
@@ -39,9 +39,8 @@ int main(int argc, char **argv) {
 
         std::string *encrypted = encrypt(contents, key, iv);
 
-        std::ofstream myfile;
-        myfile.open(argv[5], std::ios::trunc | std::ios::binary);
-        myfile << base64_encode(std::string((char *) iv));
+        std::ofstream myfile(argv[5], std::ios::trunc | std::ios::binary);
+        myfile << base64_encode(*iv);
         myfile << "-";
         myfile << base64_encode(*encrypted);
         myfile.close();
@@ -56,7 +55,7 @@ int main(int argc, char **argv) {
         std::string *contents = fileToString(argv[4]);
 
         std::string iv_encode = contents->substr(0, contents->find("-"));
-        std::string encrypted_encode = contents->erase(0, iv_encode.size() + 1);
+        std::string encrypted_encode = contents->substr(iv_encode.size() + 1, contents->size());
 
         std::string iv_decode = base64_decode(iv_encode);
         std::string encrypted_decode = base64_decode(encrypted_encode);
@@ -67,10 +66,7 @@ int main(int argc, char **argv) {
 
         std::string *decrypted = decrypt(&encrypted_decode, key, &iv_decode);
 
-        // std::cout << *decrypted << std::endl;
-
-        std::ofstream myfile;
-        myfile.open(argv[5], std::ios::trunc | std::ios::binary);
+        std::ofstream myfile(argv[5], std::ios::trunc | std::ios::binary);
         myfile << *decrypted;
         myfile.close();
 

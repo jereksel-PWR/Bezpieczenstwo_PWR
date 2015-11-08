@@ -6,7 +6,7 @@
 #include "utils.hpp"
 
 //Works nice with \0 in files
-        std::string *fileToString(char *file_location) {
+std::string *fileToString(char *file_location) {
 
     char *buffer = NULL;
     long length;
@@ -17,8 +17,9 @@
     length = ftell(file);
     fseek(file, 0, SEEK_SET);
     buffer = (char *) malloc(length * sizeof(char));
-    if (buffer)
+    if (buffer) {
         fread(buffer, 1, length, file);
+    }
     fclose(file);
 
     return new std::string(buffer, length);

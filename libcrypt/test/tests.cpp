@@ -71,6 +71,24 @@ TEST(Libcrypt, SmallIV) {
     EXPECT_TRUE(plaintext == *decrypted);
 }
 
+TEST(Libcrypt, DuzyPlik) {
+
+    std::string plaintext  = "test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test ";
+
+    auto *key = generate_iv(256);
+
+    auto *iv = generate_iv(128);
+
+    auto encrypted = encrypt(&plaintext, key, iv);
+
+    EXPECT_FALSE(plaintext == *encrypted);
+
+    auto decrypted = decrypt(encrypted, key, iv);
+
+    EXPECT_TRUE(plaintext == *decrypted);
+
+}
+
 TEST(Libcrypt, IVWithZero) {
     /* Message to be encrypted */
     std::string plaintext = "The quick brown fox jumps over the lazy dog";
@@ -90,9 +108,37 @@ TEST(Libcrypt, IVWithZero) {
     EXPECT_TRUE(plaintext == *decrypted);
 }
 
+TEST(Libcrypt, WithBase64) {
+
+    std::string plaintext  = "a test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test ";
+
+    auto *key = generate_iv(256);
+
+    auto *iv = generate_iv(128);
+
+    auto encrypted = encrypt(&plaintext, key, iv);
+
+    std::string encoded = base64_encode(*encrypted);
+    std::string decoded = base64_decode(encoded);
+
+    auto decrypted = decrypt(&decoded, key, iv);
+
+    EXPECT_TRUE(plaintext == *decrypted);
+
+}
 
 TEST(Base64, TestFromWebsite) {
     const std::string s = "ADP GmbH\nAnalyse Design & Programmierung\nGesellschaft mit beschr�nkter Haftung";
+
+    std::string encoded = base64_encode(s);
+    std::string decoded = base64_decode(encoded);
+
+    EXPECT_FALSE(s == encoded);
+    EXPECT_TRUE(decoded == s);
+}
+
+TEST(Base64, SpecialCharacters) {
+    const std::string s = "\1\2\3\4\0\5\6\7";
 
     std::string encoded = base64_encode(s);
     std::string decoded = base64_decode(encoded);
