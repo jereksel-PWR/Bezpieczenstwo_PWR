@@ -9,6 +9,10 @@
 #include <boost/algorithm/string.hpp>
 #include <keystore.hpp>
 #include <OpensslException.h>
+#include <thread>
+#include <curses.h>
+#include "song.hpp"
+#include <boost/thread.hpp>
 
 #define BITS 8
 
@@ -35,7 +39,6 @@ void usageWithConfig() {
 int main(int argc, char *argv[]) {
 
 
-
     if (argc > 1 && std::string(argv[1]) == "init") {
 
         auto sciezka = std::string(argv[2]);
@@ -50,7 +53,7 @@ int main(int argc, char *argv[]) {
             return -1;
         }
 
-        keystore* keystore1 = keystore::loadFromFile((char *) sciezka.data());
+        keystore *keystore1 = keystore::loadFromFile((char *) sciezka.data());
 
         if (!keystore1->checkKeyExistence(id_klucza)) {
             std::cout << "Nazwa klucza jest niepoprawna" << std::endl;
@@ -74,7 +77,6 @@ int main(int argc, char *argv[]) {
         auto pin = getPasswordSecurely();
 
         auto toWrite = std::string();
-
 
 
         toWrite.append(base64_encode(sciezka));
@@ -130,7 +132,7 @@ int main(int argc, char *argv[]) {
 
     std::cout << "Podaj PIN" << std::endl;
 
-    std::string* pinGet = getPasswordSecurely();
+    std::string *pinGet = getPasswordSecurely();
 
     if (pin != *pinGet) {
         std::cout << "Nieprawidłowy PIN" << std::endl;
@@ -152,53 +154,40 @@ int main(int argc, char *argv[]) {
 
     std::string *decryptedMusic = decrypt(&encrypted_decode, klucz, &iv_decode);
 
-    mpg123_handle *mh;
-    unsigned char *buffer;
-    size_t buffer_size;
-    size_t done;
-    int err;
+    song *song1 = new song(decryptedMusic);
 
-    int driver;
-    ao_device *dev;
+    boost::thread t1(boost::bind(&song::play, song1));
 
-    ao_sample_format format;
-    int channels, encoding;
-    long rate;
+    initscr();
+    timeout(-1);
 
-    /* initializations */
-    ao_initialize();
-    driver = ao_default_driver_id();
-    mpg123_init();
-    mh = mpg123_new(NULL, &err);
-    buffer_size = mpg123_outblock(mh);
-    buffer = (unsigned char *) malloc(buffer_size * sizeof(unsigned char));
+    int c = 0;
 
-    mpg123_open_feed(mh);
+#define Z_KEY 122
+
+#define A_KEY 97
+#define D_KEY 100
 
 
-    mpg123_feed(mh, (const unsigned char *) decryptedMusic->data(), decryptedMusic->size());
+    while (c != Z_KEY) {
+        c = getch();
 
-    mpg123_getformat(mh, &rate, &channels, &encoding);
+        if (c == A_KEY) {
+            song1->prev();
+        } else if (c == D_KEY) {
+            song1->forward();
+        }
 
-    /* set the output format and open the output device */
-    format.bits = mpg123_encsize(encoding) * BITS;
-    format.rate = rate;
-    format.channels = channels;
-    format.byte_format = AO_FMT_NATIVE;
-    format.matrix = 0;
-    dev = ao_open_live(driver, &format, NULL);
+        //std::cout << std::endl << c << std::endl;
+    }
 
-    /* decode and play */
-    while (mpg123_read(mh, buffer, buffer_size, &done) == MPG123_OK)
-        ao_play(dev, (char *) buffer, (uint_32) done);
 
-    /* clean up */
-    free(buffer);
-    ao_close(dev);
-    mpg123_close(mh);
-    mpg123_delete(mh);
-    mpg123_exit();
-    ao_shutdown();
+    endwin();
+
+    song1->stop();
+    t1.join();
+
+    delete song1;
 
     return 0;
 }

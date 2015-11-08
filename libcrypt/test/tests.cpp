@@ -36,10 +36,8 @@ TEST(Libcrypt, SmallKey) {
     /* Message to be encrypted */
     std::string plaintext = "The quick brown fox jumps over the lazy dog";
 
-    //256 bit key
     auto *key = new std::string("Key");
 
-    //128 bit iv
     auto *iv = generate_iv(128);
 
     auto encrypted = encrypt(&plaintext, key, iv);
@@ -49,6 +47,8 @@ TEST(Libcrypt, SmallKey) {
     auto decrypted = decrypt(encrypted, key, iv);
 
     EXPECT_TRUE(plaintext == *decrypted);
+
+    EXPECT_TRUE(*key == std::string("Key"));
 
 }
 
