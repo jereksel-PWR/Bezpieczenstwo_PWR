@@ -4,6 +4,14 @@
 
 #define BITS 8
 
+//Travis/CircleCI hax
+#if MPG123_API_VERSION < 40
+int mpg123_encsize(int encoding) {
+    return 0;
+}
+#endif
+
+
 void song::play() {
 
     mpg123_handle *mh;

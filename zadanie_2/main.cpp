@@ -16,13 +16,6 @@
 
 #define BITS 8
 
-//Travis hax
-#if MPG123_API_VERSION < 40
-int mpg123_encsize(int encoding) {
-    return 0;
-}
-#endif
-
 //Uber tajny klucz
 std::string key = std::string("supertajnykluczdoodtwarzaczamp3_");
 std::string plik = std::string(".mp3config");
