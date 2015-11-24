@@ -2,6 +2,9 @@ package pl.andrzejressel.bezpieczenstwo.lista4
 
 import pl.andrzejressel.bezpieczenstwo.lista4.zadanie2.PR
 
+import scala.concurrent.duration.Duration
+import scala.concurrent.{ExecutionContext, Await, Future}
+
 /**
  * Żródła:
  * https://pl.wikipedia.org/wiki/RSA_(kryptografia)#Opis_algorytmu.5B1.5D
@@ -13,7 +16,6 @@ object Zadanie1 extends App {
   def lcm(a: BigInt, b: BigInt): BigInt = {
     a * (b / a.gcd(b))
   }
-
 
   def standardowo(wiadomosc: BigInt, liczby: List[BigInt]) = {
 
@@ -33,10 +35,8 @@ object Zadanie1 extends App {
     //Klucz prywatny
     val d = e.modInverse(euler)
 
-
     //STANDARD
     val odszyfrowane = c.modPow(d, n)
-
 
   }
 
@@ -56,16 +56,29 @@ object Zadanie1 extends App {
     val c = superTajnaWiadomosc.modPow(e, n)
 
 
-    //(r_i, d_i, t_1)
-    val Rs = numbers.foldLeft(List[BigInt](BigInt(1)))((a, b) => a.::(b * a.head)).reverse
-    val Ds = numbers.map(a => e.modInverse(a - BigInt(1)))
-    val Ts = numbers.indices.map(e => Rs(e).modInverse(numbers(e)))
-    val Ms = numbers.indices.map(e => c.modPow(Ds(e), numbers(e)))
+    //Podobno miało być wielowątkowo, więc jest
+    val RsTsFuture: Future[(List[BigInt], IndexedSeq[BigInt])] = Future {
+
+      val Rs = numbers.foldLeft(List[BigInt](BigInt(1)))((a, b) => a.::(b * a.head)).reverse
+      val Ts = numbers.indices.map(e => Rs(e).modInverse(numbers(e)))
+
+      Tuple2(Rs, Ts)
+    }(ExecutionContext.global)
+
+    val DsMsFuture: Future[(IndexedSeq[BigInt])] = Future {
+
+      val Ds = numbers.map(a => e.modInverse(a - BigInt(1)))
+
+      numbers.indices.map(e => c.modPow(Ds(e), numbers(e)))
+    }(ExecutionContext.global)
+
+    val (rs, ts) = Await.result(RsTsFuture, Duration.Inf)
+    val ms = Await.result(DsMsFuture, Duration.Inf)
 
 
     val odszyfrowane = numbers.indices.foldLeft(BigInt(0))((m, b) => {
-      val h = (Ms(b) - m) * Ts(b).mod(numbers(b))
-      m + Rs(b) * h
+      val h = (ms(b) - m) * ts(b).mod(numbers(b))
+      m + rs(b) * h
     }) % n
 
 
