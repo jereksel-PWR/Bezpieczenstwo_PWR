@@ -1,19 +1,15 @@
-package pl.andrzejressel.bezpieczenstwo.lista2;
+package pl.andrzejressel.bezpieczenstwo.lista4;
 
 import org.apache.commons.cli.*;
-import pl.andrzejressel.bezpieczenstwo.lista2.dane.Plik;
-import pl.andrzejressel.bezpieczenstwo.lista2.dane.StronaWykladowcy;
-import pl.andrzejressel.bezpieczenstwo.lista2.dane.ZrodloDanych;
-import pl.andrzejressel.bezpieczenstwo.lista2.kodowanie.ASCII;
-import pl.andrzejressel.bezpieczenstwo.lista2.kodowanie.SystemKodowania;
 
-import java.io.File;
+import java.math.BigInteger;
 
 public class Main {
 
 
     public static void main(String[] args) throws Exception {
 
+        /*
         CommandLineParser parser = new DefaultParser();
         CommandLine cmd;
         Options options = getOptions();
@@ -25,41 +21,14 @@ public class Main {
             return;
         }
 
-
         String indeks = cmd.getOptionValue("indeks");
         String zadanie = cmd.getOptionValue("zadanie");
         String sposob = cmd.getOptionValue("sposob");
+*/
 
+      //  BigInteger liczba = Zadanie2.isPrime(64);
 
-        ZrodloDanych zrodloDanych;
-
-        switch (sposob) {
-            case "plik":
-                zrodloDanych = new Plik(new File(indeks));
-                break;
-
-            case "wykladowca":
-                zrodloDanych = new StronaWykladowcy(indeks);
-                break;
-
-            default:
-                showHelp();
-                return;
-        }
-
-        SystemKodowania ascii = new ASCII();
-
-        switch (zadanie) {
-            case "1":
-                new Zadanie1().wykonaj(zrodloDanych, ascii);
-                break;
-            case "2":
-                new Zadanie2().wykonaj(indeks, ascii);
-                break;
-            default:
-                showHelp();
-                break;
-        }
+        //System.out.println(liczba);
 
     }
 
