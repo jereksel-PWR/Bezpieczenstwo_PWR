@@ -65,7 +65,7 @@ object Zadanie1 extends App {
       Tuple2(Rs, Ts)
     }(ExecutionContext.global)
 
-    val DsMsFuture: Future[(IndexedSeq[BigInt])] = Future {
+    val MsFuture: Future[(IndexedSeq[BigInt])] = Future {
 
       val Ds = numbers.map(a => e.modInverse(a - BigInt(1)))
 
@@ -73,7 +73,7 @@ object Zadanie1 extends App {
     }(ExecutionContext.global)
 
     val (rs, ts) = Await.result(RsTsFuture, Duration.Inf)
-    val ms = Await.result(DsMsFuture, Duration.Inf)
+    val ms = Await.result(MsFuture, Duration.Inf)
 
 
     val odszyfrowane = numbers.indices.foldLeft(BigInt(0))((m, b) => {
