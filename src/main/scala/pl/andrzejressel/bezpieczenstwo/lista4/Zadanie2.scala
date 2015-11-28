@@ -13,7 +13,7 @@ object Zadanie2 extends App {
 
     val t0 = System.nanoTime()
 
-    val numbers = PR.gimmePrimes(Runtime.getRuntime.availableProcessors() * 2, j, i)
+    val numbers = PR.getPrimes(Runtime.getRuntime.availableProcessors() * 2, j, i)
 
     val t1 = System.nanoTime()
 

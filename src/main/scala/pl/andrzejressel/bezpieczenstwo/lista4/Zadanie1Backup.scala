@@ -3,7 +3,7 @@ package pl.andrzejressel.bezpieczenstwo.lista4
 import pl.andrzejressel.bezpieczenstwo.lista4.zadanie2.PR
 
 import scala.concurrent.duration.Duration
-import scala.concurrent.{ExecutionContext, Await, Future}
+import scala.concurrent.{Await, ExecutionContext, Future}
 
 /**
  * Żródła:
@@ -11,7 +11,7 @@ import scala.concurrent.{ExecutionContext, Await, Future}
  * https://www.emc.com/collateral/white-papers/h11300-pkcs-1v2-2-rsa-cryptography-standard-wp.pdf
  * http://www.di-mgt.com.au/crt_rsa.html
  */
-object Zadanie1 extends App {
+object Zadanie1Backup extends App {
 
   def lcm(a: BigInt, b: BigInt): BigInt = {
     a * (b / a.gcd(b))
@@ -81,10 +81,9 @@ object Zadanie1 extends App {
       m + rs(b) * h
     }) % n
 
-
   }
 
-  val liczby = PR.gimmePrimes(Runtime.getRuntime.availableProcessors() * 2, 256, 20)
+  val liczby = PR.getPrimes(Runtime.getRuntime.availableProcessors() * 2, 256, 20)
 
   println("Rozpoczęcie szyfrowania")
 

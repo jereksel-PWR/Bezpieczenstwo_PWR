@@ -21,7 +21,7 @@ case object RequestResult extends Message
 
 object PR {
 
-  def gimmePrimes(threadNumber: Int, numberSize: Int, numbers: Int): List[BigInt] = {
+  def getPrimes(threadNumber: Int, numberSize: Int, numbers: Int): List[BigInt] = {
 
     val config = ConfigFactory.load()
       .withValue("akka.log-dead-letters", ConfigValueFactory.fromAnyRef("0"))

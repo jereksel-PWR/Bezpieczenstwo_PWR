@@ -42,8 +42,6 @@ class Boss(threadNumber: Int, numberSize: Int, numbers: Int) extends Actor with 
 
     case StartWorkBoss =>
       (1 until i).foreach(e => {
-        //router.route(StartWork(randomNumberStream.head), self)
-        //randomNumberStream = randomNumberStream.tail
         router.route(StartWork(getRandomNumber), self)
       })
 

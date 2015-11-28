@@ -60,19 +60,14 @@ object MathUtils {
   def randomNumber(bits: Int): BigInt = {
     val secRand: SecureRandom = new SecureRandom
 
-    var number = BigInt(1) + BigInt(2).pow(bits)
-
-    // Stream.range(1, bits).foreach(ignored => numberAsString += (if (secRand.nextBoolean()) "1" else "0"))
-
-    //First and last bits are "1"
-
-    number += Stream.range(1, bits)
-      .map(Tuple2(_, secRand.nextBoolean()))
-      .filter(_._2)
-      .map(_._1)
-      .map(BigInt(2).pow).sum
-
-    return number
+    // 1 + [n-2 losowe bity] + 1 = n bitowa liczba nieparzysta
+    BigInt(2).pow(bits) + (BigInt(bits - 2, secRand) << 1) + BigInt(1)
   }
+
+
+  def combineBigInts(bigIntList: List[BigInt]): BigInt = {
+    bigIntList.foldLeft(BigInt(0))((a, b) => (a <<a.bitLength) + b)
+  }
+
 
 }
