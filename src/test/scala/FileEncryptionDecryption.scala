@@ -9,7 +9,7 @@ import scala.util.Random
 
 class FileEncryptionDecryption extends FlatSpec with Matchers {
 
-  "generating keys to files and encryption/decryption" must "work" in {
+  "generating keys and encryption/decryption of files" must "work" in {
 
     for (i <- 0 to 20) {
 
