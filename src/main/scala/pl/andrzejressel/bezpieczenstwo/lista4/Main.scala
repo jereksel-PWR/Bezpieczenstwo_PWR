@@ -61,10 +61,6 @@ object Main {
             resultFile.createNewFile()
           }
 
-         // var e = new org.bouncycastle.crypto.encodings.PKCS1Encoding(e);
-
-          //e.processBlock()
-
           val mapper = new ObjectMapper() with ScalaObjectMapper
           mapper.registerModule(DefaultScalaModule)
 
@@ -74,16 +70,22 @@ object Main {
 
           val fileAsByteArray = FileUtils.readFileToByteArray(fileToEncrypt)
 
-          FileUtils.writeStringToFile(resultFile, s"${publicKey.n.bitLength}|")
+          //  FileUtils.writeStringToFile(resultFile, s"${publicKey.n.bitLength}|")
+
+          var k = (publicKey.n.bitLength / 8) + 1
+
+          if (publicKey.n.bitLength % 8 == 0) {
+            k = k - 1
+          }
+
+          k = k - 11
 
 
-          //Liczba ma mieć 2048 bitów = 256 bajtów
-
-          fileAsByteArray.grouped(256)
-            .map(BigInt.apply)
-            .map(rsa.enc)
+          fileAsByteArray.grouped(k)
+           // .map(BigInt.apply)
+            .map(rsa.RSAES_PKCS1_V1_5_ENCRYPT)
             .toList
-            .map(_.toByteArray)
+            //.map(_.toByteArray)
             .foreach(FileUtils.writeByteArrayToFile(resultFile, _, true))
 
         /*
@@ -118,25 +120,15 @@ object Main {
 
           val rsa = new RSA(privateKey, null)
 
+          val k = (privateKey.n.bitLength / 8) + 1
 
           val fileAsArray = FileUtils.readFileToByteArray(fileToDecrypt)
 
-          val separator = '|'
-
-          val separatorLocation = fileAsArray.indexOf('|')
-
-
-          //TODO: Take if from file
-          val size = 256
-
-          val encryptedData = fileAsArray.dropWhile(e => e != separator).drop(1)
-
-
-          encryptedData.grouped(256)
-            .map(BigInt.apply)
-            .map(rsa.decCRT)
+          fileAsArray.grouped(k)
+            //.map(BigInt.apply)
+            //.map(rsa.decCRT)
+            .map(rsa.RSAES_PKCS1_V1_5_DECRYPT)
             .toList
-            .map(_.toByteArray)
             .foreach(FileUtils.writeByteArrayToFile(resultFile, _, true))
 
 

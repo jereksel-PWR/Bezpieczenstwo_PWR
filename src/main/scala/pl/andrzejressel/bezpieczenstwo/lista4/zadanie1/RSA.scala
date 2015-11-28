@@ -25,7 +25,7 @@ class RSA(val privkey: PrivKey, val pubKey: PubKey) {
   }
 
   def decStandard(ciphertext: BigInt): BigInt = {
-    ciphertext.modPow(privkey.d, privkey.n)
+    ciphertext.modPow(privkey.d, privkey.n).mod(privkey.n)
   }
 
   def decCRT(ciphertext: BigInt): BigInt = {
@@ -44,7 +44,7 @@ class RSA(val privkey: PrivKey, val pubKey: PubKey) {
     val odszyfrowane = numbers.indices.foldLeft(BigInt(0))((m, b) => {
       val h = (ms(b) - m) * ts(b).mod(numbers(b))
       m + rs(b) * h
-    }) % n
+    }).mod(n)
 
     odszyfrowane
   }
@@ -65,7 +65,7 @@ class RSA(val privkey: PrivKey, val pubKey: PubKey) {
     //+1 na wszelki wypadek
     var k = (pubKey.n.bitLength / 8) + 1
 
-    if (privkey.n.bitLength % 8 == 0) {
+    if (pubKey.n.bitLength % 8 == 0) {
       k = k - 1
     }
 
@@ -107,7 +107,8 @@ class RSA(val privkey: PrivKey, val pubKey: PubKey) {
 
     val c = RSA.OS2IP(C)
 
-    val m = decStandard(c)
+    val m = decCRT(c)
+    val m1 = decStandard(c)
 
     val EM = RSA.I2OSP(m, k)
 

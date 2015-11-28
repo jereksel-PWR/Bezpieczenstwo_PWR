@@ -15,10 +15,29 @@ class Encryption_Decryption_Tests extends FlatSpec with Matchers {
 
       val testInt = BigInt(128, secRand)
 
-      rsa.decStandard(rsa.enc(testInt)) shouldBe testInt
+      rsa.decCRT(rsa.enc(testInt)) shouldBe testInt
 
     }
   }
 
+  "Random bytes" must "be decrypted the same in \"standard\" and \"CRT\" mode" in {
+
+    val secRand = new SecureRandom()
+
+    for (i <- 1 to 100) {
+
+      val rsa = RSA.gen(256, 4)
+
+      val testInt = BigInt(128, secRand)
+      val enc = rsa.enc(testInt)
+
+      val decSt = rsa.decStandard(enc)
+      val decCRT = rsa.decCRT(enc)
+
+      decSt shouldBe decCRT
+
+    }
+
+  }
 
 }
