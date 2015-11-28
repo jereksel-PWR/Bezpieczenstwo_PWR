@@ -8,6 +8,11 @@ import com.fasterxml.jackson.module.scala.experimental.ScalaObjectMapper
 import org.apache.commons.io.FileUtils
 import pl.andrzejressel.bezpieczenstwo.lista4.zadanie1.{PrivKey, PubKey, RSA}
 
+import scala.concurrent.ExecutionContext.Implicits.global
+
+import scala.concurrent.{Await, Future}
+import scala.concurrent.duration.Duration
+
 object Main {
 
   def printHelp(): Unit = {
@@ -27,7 +32,6 @@ object Main {
           Zadanie2.main(null)
 
         case "gen" if args.length == 5 =>
-
 
           val mapper = new ObjectMapper() with ScalaObjectMapper
           mapper.registerModule(DefaultScalaModule)
@@ -70,8 +74,6 @@ object Main {
 
           val fileAsByteArray = FileUtils.readFileToByteArray(fileToEncrypt)
 
-          //  FileUtils.writeStringToFile(resultFile, s"${publicKey.n.bitLength}|")
-
           var k = (publicKey.n.bitLength / 8) + 1
 
           if (publicKey.n.bitLength % 8 == 0) {
@@ -80,26 +82,19 @@ object Main {
 
           k = k - 11
 
+          println("Dzielenie pliku")
+          val groupedData = fileAsByteArray.grouped(k)
 
-          fileAsByteArray.grouped(k)
-           // .map(BigInt.apply)
-            .map(rsa.RSAES_PKCS1_V1_5_ENCRYPT)
-            .toList
-            //.map(_.toByteArray)
-            .foreach(FileUtils.writeByteArrayToFile(resultFile, _, true))
+          println("Szyfrowanie")
+          val futureEncryptedData = Future.traverse(groupedData)(e => Future(rsa.RSAES_PKCS1_V1_5_ENCRYPT(e)))
+          val encryptedData = Await.result(futureEncryptedData, Duration.Inf)
 
-        /*
-                  BigEndianConversions
-                    .toIntArray(fileAsByteArray)
-                    .map(BigInt.apply)
-                    .map(rsa.enc)
-                    .grouped(512 / 8)
-                    .toList
-        */
-        //.map(e => e.for)
+          println("Łączenie danych")
+          val combined =  encryptedData.flatMap(e => e).toArray
 
-        // .map(_.toString() + "|")
-        // .foreach(FileUtils.writeStringToFile(resultFile, _, true))
+
+          println("Pisanie do pliku")
+          FileUtils.writeByteArrayToFile(resultFile, combined)
 
         case "dec" if args.length == 4 =>
 
@@ -120,26 +115,26 @@ object Main {
 
           val rsa = new RSA(privateKey, null)
 
-          val k = (privateKey.n.bitLength / 8) + 1
+          var k = (privateKey.n.bitLength / 8) + 1
 
-          val fileAsArray = FileUtils.readFileToByteArray(fileToDecrypt)
+          if (privateKey.n.bitLength % 8 == 0) {
+            k = k - 1
+          }
 
-          fileAsArray.grouped(k)
-            //.map(BigInt.apply)
-            //.map(rsa.decCRT)
-            .map(rsa.RSAES_PKCS1_V1_5_DECRYPT)
-            .toList
-            .foreach(FileUtils.writeByteArrayToFile(resultFile, _, true))
+          val fileAsByteArray = FileUtils.readFileToByteArray(fileToDecrypt)
 
+          println("Dzielenie pliku")
+          val groupedData = fileAsByteArray.grouped(k)
 
-        // val fileAsString = FileUtils.readFileToString(fileToDecrypt)
+          println("Deszyfrowanie")
+          val futureDecryptedData = Future.traverse(groupedData)(e => Future(rsa.RSAES_PKCS1_V1_5_DECRYPT(e)))
+          val decryptedData = Await.result(futureDecryptedData, Duration.Inf)
 
+          println("Łączenie danych")
+          val combined =  decryptedData.flatMap(e => e).toArray
 
-        // val intArray = StringUtils.split(fileAsString, "|").map(BigInt.apply).map(rsa.decCRT).map(_.toInt)
-
-        // val byteArray = BigEndianConversions.toByteArray(intArray)
-
-        //  FileUtils.writeByteArrayToFile(resultFile, byteArray, true)
+          println("Pisanie do pliku")
+          FileUtils.writeByteArrayToFile(resultFile, combined)
 
 
         case default =>

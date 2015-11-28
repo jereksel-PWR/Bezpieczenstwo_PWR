@@ -1,6 +1,6 @@
 import java.security.SecureRandom
 
-import org.scalatest.{Matchers, FlatSpec}
+import org.scalatest.{FlatSpec, Matchers}
 import pl.andrzejressel.bezpieczenstwo.lista4.zadanie1.RSA
 
 class Encryption_Decryption_Tests extends FlatSpec with Matchers {
@@ -28,7 +28,7 @@ class Encryption_Decryption_Tests extends FlatSpec with Matchers {
 
       val rsa = RSA.gen(256, 4)
 
-      val testInt = BigInt(128, secRand)
+      val testInt = BigInt(256, secRand)
       val enc = rsa.enc(testInt)
 
       val decSt = rsa.decStandard(enc)

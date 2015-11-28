@@ -108,7 +108,8 @@ class RSA(val privkey: PrivKey, val pubKey: PubKey) {
     val c = RSA.OS2IP(C)
 
     val m = decCRT(c)
-    val m1 = decStandard(c)
+    //val m1 = decStandard(c)
+    val m1 = decCRT(c)
 
     val EM = RSA.I2OSP(m, k)
 
@@ -146,9 +147,8 @@ object RSA {
 
   def I2OSP(x: BigInt, xLen: Int): Array[Byte] = {
 
-
-    Stream.range(1, xLen + 1).foldLeft((List[Byte](), x))((pair, i) => {
-      val bigData = x./%(BigInt(256).pow(xLen - i))
+    Stream.range(0, xLen).foldLeft((List[Byte](), x))((pair, i) => {
+      val bigData = x./%(BigInt(256).pow(xLen - (i + 1)))
       (pair._1 ++ List[Byte](bigData._1.byteValue()), bigData._2)
     })._1.toArray
 
@@ -192,7 +192,7 @@ object RSA {
 
   def gen(keySize: Int, keyNumber: Int): RSA = {
 
-    val numbers = PR.getPrimes(Runtime.getRuntime.availableProcessors() * 2, keySize, keyNumber)
+    val numbers = PR.getPrimes(Runtime.getRuntime.availableProcessors(), keySize, keyNumber)
 
     val n = numbers.foldLeft(BigInt(1))((a, b) => a * b)
 
