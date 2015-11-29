@@ -13,14 +13,14 @@ object Zadanie2 extends App {
 
     val t0 = System.nanoTime()
 
-    val numbers = PR.getPrimes(Runtime.getRuntime.availableProcessors() * 2, j, i)
+    val numbers = PR.getPrimes(Runtime.getRuntime.availableProcessors(), j, i)
 
     val t1 = System.nanoTime()
 
     println(s"Czas: ${(t1 - t0) / 1000000000.0}s")
-    println("Liczby")
+  //  println("Liczby")
 
-    numbers.foreach(println)
+  //  numbers.foreach(println)
 
     println()
 
