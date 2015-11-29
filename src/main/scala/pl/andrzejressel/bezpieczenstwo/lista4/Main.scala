@@ -8,11 +8,6 @@ import com.fasterxml.jackson.module.scala.experimental.ScalaObjectMapper
 import org.apache.commons.io.FileUtils
 import pl.andrzejressel.bezpieczenstwo.lista4.zadanie1.{PrivKey, PubKey, RSA}
 
-import scala.concurrent.ExecutionContext.Implicits.global
-
-import scala.concurrent.{Await, Future}
-import scala.concurrent.duration.Duration
-
 object Main {
 
   def printHelp(): Unit = {
@@ -74,6 +69,7 @@ object Main {
 
           val fileAsByteArray = FileUtils.readFileToByteArray(fileToEncrypt)
 
+          /*
           var k = (publicKey.n.bitLength / 8) + 1
 
           if (publicKey.n.bitLength % 8 == 0) {
@@ -92,9 +88,11 @@ object Main {
           println("Łączenie danych")
           val combined =  encryptedData.flatMap(e => e).toArray
 
-
           println("Pisanie do pliku")
-          FileUtils.writeByteArrayToFile(resultFile, combined)
+
+          */
+
+          FileUtils.writeByteArrayToFile(resultFile, rsa.enc(fileAsByteArray))
 
         case "dec" if args.length == 4 =>
 
@@ -115,6 +113,10 @@ object Main {
 
           val rsa = new RSA(privateKey, null)
 
+          val fileAsByteArray = FileUtils.readFileToByteArray(fileToDecrypt)
+
+          /*
+
           var k = (privateKey.n.bitLength / 8) + 1
 
           if (privateKey.n.bitLength % 8 == 0) {
@@ -133,8 +135,10 @@ object Main {
           println("Łączenie danych")
           val combined =  decryptedData.flatMap(e => e).toArray
 
-          println("Pisanie do pliku")
-          FileUtils.writeByteArrayToFile(resultFile, combined)
+          */
+
+        //  println("Pisanie do pliku")
+          FileUtils.writeByteArrayToFile(resultFile, rsa.dec(fileAsByteArray))
 
 
         case default =>

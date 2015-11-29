@@ -18,9 +18,6 @@ object Zadanie2 extends App {
     val t1 = System.nanoTime()
 
     println(s"Czas: ${(t1 - t0) / 1000000000.0}s")
-  //  println("Liczby")
-
-  //  numbers.foreach(println)
 
     println()
 

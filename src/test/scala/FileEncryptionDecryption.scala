@@ -11,9 +11,9 @@ class FileEncryptionDecryption extends FlatSpec with Matchers {
 
   "generating keys and encryption/decryption of files" must "work" in {
 
-    for (i <- 0 to 20) {
+    for (i <- 0 to 10) {
 
-      println(i)
+      //println(i)
 
       val random = new Random()
 
@@ -45,7 +45,7 @@ class FileEncryptionDecryption extends FlatSpec with Matchers {
 
       FileUtils.deleteDirectory(tempDir)
 
-      println()
+    //  println()
 
     }
 

@@ -1,0 +1,32 @@
+RSA:
+
+128 bitów (16 bajtów)
+
+1 wiadomoœci
+Czas: 0.076316591s
+
+10 wiadomoœci
+Czas: 0.309936433s
+
+100 wiadomoœci
+Czas: 1.358447817s
+
+1000 wiadomoœci
+Czas: 12.017277644s
+
+10000 wiadomoœci
+Czas: 117.139510271s
+
+1 MB
+
+1 wiadomoœæ
+Czas: 15.407850545s
+
+10 wiadomoœci
+Czas: 134.07751241s
+
+
+10 MB
+
+1 wiadomoœci
+Czas: 139.580120042s

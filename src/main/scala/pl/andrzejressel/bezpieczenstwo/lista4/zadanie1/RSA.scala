@@ -20,6 +20,53 @@ class PubKey(val e: BigInt, val n: BigInt)
  */
 class RSA(val privkey: PrivKey, val pubKey: PubKey) {
 
+  def enc(message: Array[Byte]): Array[Byte] = {
+
+    var k = (pubKey.n.bitLength / 8) + 1
+
+    if (pubKey.n.bitLength % 8 == 0) {
+      k = k - 1
+    }
+
+    k = k - 11
+
+    // println("Dzielenie pliku")
+    val groupedData = message.grouped(k)
+
+    // println("Szyfrowanie")
+    val futureEncryptedData = Future.traverse(groupedData)(e => Future(RSAES_PKCS1_V1_5_ENCRYPT(e)))
+    val encryptedData = Await.result(futureEncryptedData, Duration.Inf)
+
+    // println("Łączenie danych")
+    val combined = encryptedData.flatMap(e => e).toArray
+
+    combined
+  }
+
+  def dec(message: Array[Byte]): Array[Byte] = {
+
+    var k = (privkey.n.bitLength / 8) + 1
+
+    if (privkey.n.bitLength % 8 == 0) {
+      k = k - 1
+    }
+
+    //  val fileAsByteArray = FileUtils.readFileToByteArray(fileToDecrypt)
+
+    //  println("Dzielenie pliku")
+    val groupedData = message.grouped(k)
+
+    //  println("Deszyfrowanie")
+    val futureDecryptedData = Future.traverse(groupedData)(e => Future(RSAES_PKCS1_V1_5_DECRYPT(e)))
+    val decryptedData = Await.result(futureDecryptedData, Duration.Inf)
+
+    // println("Łączenie danych")
+    val combined = decryptedData.flatMap(e => e).toArray
+
+    combined
+  }
+
+
   def enc(message: BigInt): BigInt = {
     message.modPow(pubKey.e, pubKey.n)
   }
@@ -108,8 +155,7 @@ class RSA(val privkey: PrivKey, val pubKey: PubKey) {
     val c = RSA.OS2IP(C)
 
     val m = decCRT(c)
-    //val m1 = decStandard(c)
-    val m1 = decCRT(c)
+    //val m = decStandard(c)
 
     val EM = RSA.I2OSP(m, k)
 

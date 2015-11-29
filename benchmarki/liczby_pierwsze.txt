@@ -1,0 +1,125 @@
+Ilość liczb: 1 Wielkość liczby: 256
+Czas: 0.55851803s
+
+Ilość liczb: 2 Wielkość liczby: 256
+Czas: 0.12056225s
+
+Ilość liczb: 3 Wielkość liczby: 256
+Czas: 0.139332729s
+
+Ilość liczb: 4 Wielkość liczby: 256
+Czas: 0.126233451s
+
+Ilość liczb: 5 Wielkość liczby: 256
+Czas: 0.053598219s
+
+Ilość liczb: 6 Wielkość liczby: 256
+Czas: 0.118662001s
+
+Ilość liczb: 7 Wielkość liczby: 256
+Czas: 0.184303009s
+
+Ilość liczb: 8 Wielkość liczby: 256
+Czas: 0.12996304s
+
+Ilość liczb: 1 Wielkość liczby: 512
+Czas: 0.309637342s
+
+Ilość liczb: 2 Wielkość liczby: 512
+Czas: 0.136073382s
+
+Ilość liczb: 3 Wielkość liczby: 512
+Czas: 0.479422884s
+
+Ilość liczb: 4 Wielkość liczby: 512
+Czas: 0.075972952s
+
+Ilość liczb: 5 Wielkość liczby: 512
+Czas: 0.185948545s
+
+Ilość liczb: 6 Wielkość liczby: 512
+Czas: 0.153123997s
+
+Ilość liczb: 7 Wielkość liczby: 512
+Czas: 0.770300631s
+
+Ilość liczb: 8 Wielkość liczby: 512
+Czas: 0.635925655s
+
+Ilość liczb: 1 Wielkość liczby: 1024
+Czas: 1.986119784s
+
+Ilość liczb: 2 Wielkość liczby: 1024
+Czas: 3.78801991s
+
+Ilość liczb: 3 Wielkość liczby: 1024
+Czas: 2.15681782s
+
+Ilość liczb: 4 Wielkość liczby: 1024
+Czas: 4.728390654s
+
+Ilość liczb: 5 Wielkość liczby: 1024
+Czas: 1.587973756s
+
+Ilość liczb: 6 Wielkość liczby: 1024
+Czas: 4.521129464s
+
+Ilość liczb: 7 Wielkość liczby: 1024
+Czas: 3.149913167s
+
+Ilość liczb: 8 Wielkość liczby: 1024
+Czas: 6.752470324s
+
+Ilość liczb: 1 Wielkość liczby: 2048
+Czas: 12.087682965s
+
+Ilość liczb: 2 Wielkość liczby: 2048
+Czas: 7.143791006s
+
+Ilość liczb: 3 Wielkość liczby: 2048
+Czas: 31.318406477s
+
+Ilość liczb: 4 Wielkość liczby: 2048
+Czas: 32.031445234s
+
+Ilość liczb: 5 Wielkość liczby: 2048
+Czas: 43.713034091s
+
+Ilość liczb: 6 Wielkość liczby: 2048
+Czas: 119.21359639s
+
+Ilość liczb: 7 Wielkość liczby: 2048
+Czas: 102.451465898s
+
+Ilość liczb: 8 Wielkość liczby: 2048
+Czas: 117.291892561s
+
+Ilość liczb: 1 Wielkość liczby: 3072
+Czas: 27.001463908s
+
+Ilość liczb: 2 Wielkość liczby: 3072
+Czas: 81.645502163s
+
+Ilość liczb: 3 Wielkość liczby: 3072
+Czas: 75.190822015s
+
+Ilość liczb: 4 Wielkość liczby: 3072
+Czas: 101.438624443s
+
+Ilość liczb: 5 Wielkość liczby: 3072
+Czas: 279.351274566s
+
+Ilość liczb: 6 Wielkość liczby: 3072
+Czas: 1047.643329783s
+
+Ilość liczb: 7 Wielkość liczby: 3072
+Czas: 305.115318993s
+
+Ilość liczb: 8 Wielkość liczby: 3072
+Czas: 284.320928429s
+
+Ilość liczb: 1 Wielkość liczby: 7680
+Czas: 3197.327555353s
+
+Ilość liczb: 2 Wielkość liczby: 7680
+Czas: 3669.521444513s
