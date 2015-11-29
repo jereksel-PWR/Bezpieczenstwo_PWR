@@ -2,7 +2,7 @@ RSA:
 
 128 bitów (16 bajtów)
 
-1 wiadomoœci
+1 wiadomoœæ
 Czas: 0.076316591s
 
 10 wiadomoœci
@@ -28,5 +28,53 @@ Czas: 134.07751241s
 
 10 MB
 
-1 wiadomoœci
+1 wiadomoœæ
 Czas: 139.580120042s
+
+
+AES:
+
+128 bitów (16 bajtów)
+
+1 wiadomoœæ
+0s
+
+10 wiadomoœci
+0s
+
+100 wiadomoœci
+0s
+
+1000 wiadomoœci
+0.015s
+
+10000 wiadomoœci
+0.016s
+
+1 MB
+
+1 wiadomoœæ
+0s
+
+10 wiadomoœci
+0.031s
+
+100 wiadomoœci
+0.266s
+
+1000 wiadomoœci
+2.703s
+
+10000 wiadomoœci
+26.749s
+
+10 MB
+
+1 wiadomoœci
+0.03s
+
+10 wiadomoœci
+0.204s
+
+100 wiadomoœci
+2.172s
