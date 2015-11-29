@@ -42,6 +42,9 @@ class FileEncryptionDecryption extends FlatSpec with Matchers {
       Main.main(Array("dec", privKey.getAbsolutePath, encFile.getAbsolutePath, decFile.getAbsolutePath))
 
       FileUtils.readFileToByteArray(baseFile) shouldBe  FileUtils.readFileToByteArray(decFile)
+      FileUtils.readFileToByteArray(baseFile) should not equal FileUtils.readFileToByteArray(encFile)
+      FileUtils.readFileToByteArray(decFile) should not equal FileUtils.readFileToByteArray(encFile)
+
 
       FileUtils.deleteDirectory(tempDir)
 

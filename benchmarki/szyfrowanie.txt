@@ -1,80 +1,80 @@
-RSA:
+RSA (3*1024 bit):
 
-128 bit體 (16 bajt體)
+128 bit贸w (16 bajt贸w)
 
-1 wiadomo滄
+1 wiadomo艣膰
 Czas: 0.076316591s
 
-10 wiadomo渃i
+10 wiadomo艣ci
 Czas: 0.309936433s
 
-100 wiadomo渃i
+100 wiadomo艣ci
 Czas: 1.358447817s
 
-1000 wiadomo渃i
+1000 wiadomo艣ci
 Czas: 12.017277644s
 
-10000 wiadomo渃i
+10000 wiadomo艣ci
 Czas: 117.139510271s
 
 1 MB
 
-1 wiadomo滄
+1 wiadomo艣膰
 Czas: 15.407850545s
 
-10 wiadomo渃i
+10 wiadomo艣ci
 Czas: 134.07751241s
 
 
 10 MB
 
-1 wiadomo滄
+1 wiadomo艣膰
 Czas: 139.580120042s
 
 
-AES:
+AES (128 bitowy klucz):
 
-128 bit體 (16 bajt體)
+128 bit贸w (16 bajt贸w)
 
-1 wiadomo滄
+1 wiadomo艣膰
 0s
 
-10 wiadomo渃i
+10 wiadomo艣ci
 0s
 
-100 wiadomo渃i
+100 wiadomo艣ci
 0s
 
-1000 wiadomo渃i
+1000 wiadomo艣ci
 0.015s
 
-10000 wiadomo渃i
+10000 wiadomo艣ci
 0.016s
 
 1 MB
 
-1 wiadomo滄
+1 wiadomo艣膰
 0s
 
-10 wiadomo渃i
+10 wiadomo艣ci
 0.031s
 
-100 wiadomo渃i
+100 wiadomo艣ci
 0.266s
 
-1000 wiadomo渃i
+1000 wiadomo艣ci
 2.703s
 
-10000 wiadomo渃i
+10000 wiadomo艣ci
 26.749s
 
 10 MB
 
-1 wiadomo渃i
+1 wiadomo艣ci
 0.03s
 
-10 wiadomo渃i
+10 wiadomo艣ci
 0.204s
 
-100 wiadomo渃i
+100 wiadomo艣ci
 2.172s

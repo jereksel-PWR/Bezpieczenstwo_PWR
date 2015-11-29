@@ -15,7 +15,7 @@ object Benchmark extends App {
 
   //Generowanie wiadomości
   val message = Array.fill[Byte](10* 1000000)(0x00)
- // val message = Array.fill[Byte](16)(0x00)
+  // val message = Array.fill[Byte](16)(0x00)
 
   secRand.nextBytes(message)
 

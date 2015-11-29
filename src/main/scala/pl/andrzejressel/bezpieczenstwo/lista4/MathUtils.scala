@@ -65,9 +65,4 @@ object MathUtils {
   }
 
 
-  def combineBigInts(bigIntList: List[BigInt]): BigInt = {
-    bigIntList.foldLeft(BigInt(0))((a, b) => (a <<a.bitLength) + b)
-  }
-
-
 }
